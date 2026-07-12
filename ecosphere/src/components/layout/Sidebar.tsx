@@ -172,15 +172,43 @@ export default function Sidebar() {
       <div className="ledger-rule mx-4" />
       <div className="px-4 py-3">
         <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-300"
+          className="flex flex-col gap-2 p-3 rounded-xl border"
           style={{
-            background: 'var(--canopy-glow)',
-            borderColor: 'var(--moss-line)',
+            background: 'var(--color-surface-2)',
+            borderColor: 'var(--color-surface-border)',
           }}
         >
-          <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--canopy)' }} />
-          <div className="text-[10px] font-mono-data" style={{ color: 'var(--paper-dim)' }}>
-            Env 40 · Soc 30 · Gov 30
+          <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-text-secondary">
+            <span>ESG Weighting</span>
+            <span className="font-mono text-brand-400">100%</span>
+          </div>
+          
+          {/* Segmented bar */}
+          <div className="w-full h-2 rounded-full overflow-hidden flex bg-surface-3 border border-surface-border">
+            {/* Environmental - 40% */}
+            <div
+              className="h-full bg-environmental relative group cursor-help"
+              style={{ width: '40%' }}
+              title="Environmental (40%): Tracks Carbon Scope 1/2/3 and operations targets"
+            />
+            {/* Social - 30% */}
+            <div
+              className="h-full bg-social relative group cursor-help border-l border-surface-border"
+              style={{ width: '30%' }}
+              title="Social (30%): CSR volunteer activities, XP levels, and rewards match rate"
+            />
+            {/* Governance - 30% */}
+            <div
+              className="h-full bg-governance relative group cursor-help border-l border-surface-border"
+              style={{ width: '30%' }}
+              title="Governance (30%): Compliance issue resolution, audits, and policy signs"
+            />
+          </div>
+
+          <div className="flex justify-between items-center text-[9px] font-mono text-text-tertiary mt-0.5">
+            <span className="text-environmental font-semibold">Env 40%</span>
+            <span className="text-social font-semibold">Soc 30%</span>
+            <span className="text-governance font-semibold">Gov 30%</span>
           </div>
         </div>
       </div>

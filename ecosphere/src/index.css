@@ -1,10 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: 'Fraunces', serif;
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  /* Base surfaces — cooler, deeper, less "pure black" */
+  --color-canvas: #0A0F0D;           /* page background */
+  --color-surface-1: #101714;        /* sidebar, header */
+  --color-surface-2: #141D19;        /* cards, panels */
+  --color-surface-3: #1B2621;        /* elevated cards, modals, hover states */
+  --color-surface-border: #263029;   /* hairline borders */
+  --color-surface-border-strong: #34433A;
+
+  /* Brand green — now used ONLY for primary actions + active/success states */
+  --color-brand-500: #22C55E;
+  --color-brand-400: #4ADE80;
+  --color-brand-600: #16A34A;
+  --color-brand-glow: rgba(34, 197, 94, 0.25);
+
+  /* ESG pillar colors — give each pillar real identity instead of all-green */
+  --color-environmental: #22C55E;    /* green */
+  --color-social: #3B82F6;           /* blue */
+  --color-governance: #A855F7;       /* violet */
+
+  /* Semantic status */
+  --color-status-draft: #71717A;     /* zinc/gray */
+  --color-status-active: #3B82F6;    /* blue — "in motion" */
+  --color-status-review: #F59E0B;    /* amber — "needs attention" */
+  --color-status-complete: #22C55E;  /* green — "done" */
+
+  /* Difficulty */
+  --color-diff-easy: #4ADE80;
+  --color-diff-medium: #FBBF24;
+  --color-diff-hard: #F87171;
+
+  /* Text */
+  --color-text-primary: #F4F7F5;
+  --color-text-secondary: #9CA6A0;
+  --color-text-tertiary: #64716A;
+
+  /* Gamification accent — gold for XP/rewards, distinct from brand green */
+  --color-xp-gold: #FBBF24;
+  --color-xp-glow: rgba(251, 191, 36, 0.35);
+
+  /* Typography */
+  --font-display: 'Cal Sans', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
+
+.elevation-1 { box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+.elevation-2 { box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.4); }
+.elevation-3 { box-shadow: 0 12px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3); }
 
 :root {
   /* Core backgrounds */
@@ -327,11 +371,29 @@ h1,h2,h3,h4,.font-display {
 .animate-count-up  { animation: count-up 0.4s ease forwards; }
 .animate-glow-pulse{ animation: glow-pulse 2.5s ease-in-out infinite; }
 
-/* ─── Reduced motion ─────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.rotating-border-glow {
+  position: absolute;
+  inset: -150%;
+  background: conic-gradient(from 0deg, transparent 20%, var(--color-xp-gold) 40%, transparent 60%, var(--color-brand-400) 80%, transparent 100%);
+  animation: spin 20s linear infinite;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Reduced motion overrides */
 @media (prefers-reduced-motion: reduce) {
-  *,*::before,*::after {
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+  .rotating-border-glow {
+    animation: none !important;
+    opacity: 0.03;
   }
 }

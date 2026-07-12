@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Bell, Search, Zap, CheckCircle2, AlertTriangle, Sun, Moon } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { db, collection, onSnapshot, setDoc, doc } from '../../lib/firebase';
 import type { AppNotification } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -58,35 +59,35 @@ export default function Topbar() {
 
   return (
     <header
-      className="h-14 shrink-0 flex items-center justify-between px-6 border-b z-20 relative"
+      className="h-14 shrink-0 flex items-center justify-between px-6 border-b z-20 sticky top-0 backdrop-blur-md"
       style={{
         background: isLight
-          ? 'linear-gradient(90deg, #ffffff 0%, #f5faf7 100%)'
-          : 'linear-gradient(90deg, var(--ink-raised) 0%, rgba(16,26,21,0.95) 100%)',
-        borderColor: 'var(--moss-line)',
-        backdropFilter: 'blur(8px)',
+          ? 'rgba(251, 250, 244, 0.8)'
+          : 'rgba(10, 15, 13, 0.8)',
+        borderColor: 'var(--color-surface-border)',
         transition: 'background 0.25s ease',
       }}
     >
       {/* Search */}
       <div
-        className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg w-72 transition-all duration-300 border border-moss-line focus-within:w-[450px] focus-within:border-canopy focus-within:ring-2 focus-within:ring-canopy"
+        className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg w-72 transition-all duration-300 border border-moss-line focus-within:w-96 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-glow"
         style={{
-          background: 'var(--ink-raised)',
+          background: 'var(--color-surface-2)',
+          borderColor: 'var(--color-surface-border)',
         }}
       >
-        <Search size={14} style={{ color: 'var(--paper-dim)' }} />
+        <Search size={14} style={{ color: 'var(--color-text-secondary)' }} />
         <input
           placeholder="Search departments, audits, employees…"
-          className="bg-transparent outline-none text-xs w-full placeholder:opacity-50"
-          style={{ color: 'var(--paper)', fontFamily: 'var(--font-body)' }}
+          className="bg-transparent outline-none text-xs w-full placeholder:opacity-50 text-text-primary"
+          style={{ fontFamily: 'var(--font-body)' }}
         />
         <kbd
           className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold shrink-0"
           style={{
             background: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.07)',
-            color: 'var(--paper-dim)',
-            border: '1px solid var(--moss-line)',
+            color: 'var(--color-text-tertiary)',
+            border: '1px solid var(--color-surface-border)',
           }}
         >
           Ctrl K
@@ -99,12 +100,12 @@ export default function Topbar() {
         <button
           onClick={toggleTheme}
           title={isLight ? 'Switch to Dark mode' : 'Switch to Light mode'}
-          className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl cursor-pointer transition-all duration-300"
+          className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl cursor-pointer transition-all duration-300 border"
           style={{
             background: isLight
               ? 'linear-gradient(135deg, #fef9c3, #fef08a)'
               : 'linear-gradient(135deg, #1e293b, #0f172a)',
-            border: isLight ? '1px solid #fcd34d' : '1px solid #334155',
+            borderColor: isLight ? '#fcd34d' : '#334155',
             boxShadow: isLight
               ? '0 2px 8px rgba(251,191,36,0.3)'
               : '0 2px 8px rgba(15,23,42,0.5)',
@@ -144,14 +145,16 @@ export default function Topbar() {
             style={{ background: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)' }}
             aria-label="Notifications"
           >
-            <Bell size={17} style={{ color: unreadCount > 0 ? 'var(--amber)' : 'var(--paper-dim)' }} />
+            <Bell size={17} style={{ color: unreadCount > 0 ? 'var(--color-xp-gold)' : 'var(--color-text-secondary)' }} />
             {unreadCount > 0 && (
-              <span
+              <motion.span
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
                 className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
-                style={{ background: 'var(--amber)', color: '#fff', boxShadow: '0 0 8px var(--amber-glow)' }}
+                style={{ background: 'var(--color-xp-gold)', color: '#000', boxShadow: '0 0 8px var(--color-xp-glow)' }}
               >
                 {unreadCount}
-              </span>
+              </motion.span>
             )}
           </button>
 
@@ -159,28 +162,28 @@ export default function Topbar() {
             <div
               className="absolute right-0 mt-2 w-80 rounded-xl border shadow-2xl flex flex-col max-h-96 overflow-hidden z-50 animate-fade-in"
               style={{
-                background: 'var(--ink-raised)',
-                borderColor: 'var(--moss-line)',
+                background: 'var(--color-surface-2)',
+                borderColor: 'var(--color-surface-border)',
                 boxShadow: isLight ? '0 8px 32px rgba(0,0,0,0.15)' : '0 8px 32px rgba(0,0,0,0.6)',
               }}
             >
-              <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid var(--moss-line)' }}>
-                <span className="text-xs font-bold" style={{ color: 'var(--paper)' }}>
+              <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid var(--color-surface-border)' }}>
+                <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>
                   Notifications
                   {unreadCount > 0 && (
                     <span className="ml-2 badge badge-amber">{unreadCount} new</span>
                   )}
                 </span>
                 {unreadCount > 0 && (
-                  <button onClick={handleMarkAllRead} className="text-[10px] font-semibold" style={{ color: 'var(--canopy)' }}>
+                  <button onClick={handleMarkAllRead} className="text-[10px] font-semibold cursor-pointer" style={{ color: 'var(--color-brand-500)' }}>
                     Mark all read
                   </button>
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto divide-y" style={{ borderColor: 'var(--moss-line)' }}>
+              <div className="flex-1 overflow-y-auto divide-y" style={{ borderColor: 'var(--color-surface-border)' }}>
                 {notifications.length === 0 ? (
-                  <div className="p-6 text-center text-xs" style={{ color: 'var(--paper-dim)' }}>
+                  <div className="p-6 text-center text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                     No notifications yet. Compliance alerts and badges show here.
                   </div>
                 ) : (
@@ -190,7 +193,7 @@ export default function Topbar() {
                       onClick={() => handleMarkAsRead(notif.id)}
                       className="p-3.5 text-xs flex gap-3 transition-colors cursor-pointer"
                       style={{
-                        background: notif.read ? undefined : isLight ? 'rgba(22,163,74,0.05)' : 'rgba(255,255,255,0.025)',
+                        background: notif.read ? undefined : isLight ? 'rgba(34,197,94,0.05)' : 'rgba(255,255,255,0.025)',
                         opacity: notif.read ? 0.65 : 1,
                       }}
                     >
@@ -202,16 +205,16 @@ export default function Topbar() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2">
-                          <span className="font-semibold" style={{ color: 'var(--paper)' }}>
+                          <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                             {notif.type === 'BadgeUnlocked' ? 'Achievement Unlocked'
                               : notif.type === 'ComplianceIssueRaised' ? 'Compliance Alert'
                               : 'System Update'}
                           </span>
-                          <span className="text-[9px] shrink-0 font-mono-data" style={{ color: 'var(--paper-dim)' }}>
+                          <span className="text-[9px] shrink-0 font-mono-data" style={{ color: 'var(--color-text-secondary)' }}>
                             {notif.createdAt.split('T')[0]}
                           </span>
                         </div>
-                        <div className="mt-0.5 leading-relaxed" style={{ color: 'var(--paper-dim)' }}>{notif.message}</div>
+                        <div className="mt-0.5 leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{notif.message}</div>
                       </div>
                     </div>
                   ))
@@ -221,21 +224,47 @@ export default function Topbar() {
           )}
         </div>
 
-        {/* ── User Avatar ── */}
-        <div className="flex items-center gap-2.5 pl-3" style={{ borderLeft: '1px solid var(--moss-line)' }}>
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold"
-            style={{
-              background: 'linear-gradient(135deg, var(--canopy), var(--canopy-dim))',
-              color: 'white',
-              boxShadow: '0 0 12px var(--canopy-glow)',
-            }}
-          >
-            TS
+        {/* ── User Avatar Chip with Progress Ring ── */}
+        <div className="flex items-center gap-3 pl-3" style={{ borderLeft: '1px solid var(--color-surface-border)' }}>
+          <div className="relative w-10 h-10 flex items-center justify-center">
+            {/* XP Circular Progress Ring */}
+            <svg className="w-10 h-10 absolute inset-0 -rotate-90">
+              <circle
+                cx="20"
+                cy="20"
+                r="17"
+                stroke="var(--color-surface-border-strong)"
+                strokeWidth="2"
+                fill="none"
+              />
+              <motion.circle
+                cx="20"
+                cy="20"
+                r="17"
+                stroke="var(--color-xp-gold)"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray="106.8"
+                initial={{ strokeDashoffset: 106.8 }}
+                animate={{ strokeDashoffset: 106.8 * (1 - 1240 / 1500) }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+              />
+            </svg>
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold z-10"
+              style={{
+                background: 'linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600))',
+                color: 'white',
+                boxShadow: '0 0 8px var(--color-brand-glow)',
+              }}
+            >
+              TS
+            </div>
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-semibold" style={{ color: 'var(--paper)' }}>Thiru</div>
-            <div className="text-[10px] font-mono-data font-semibold" style={{ color: 'var(--amber)' }}>
+            <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Thiru</div>
+            <div className="text-[10px] font-mono font-semibold" style={{ color: 'var(--color-xp-gold)' }}>
               1,240 XP
             </div>
           </div>
