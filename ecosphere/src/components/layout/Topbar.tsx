@@ -70,10 +70,9 @@ export default function Topbar() {
     >
       {/* Search */}
       <div
-        className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg w-72"
+        className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg w-72 transition-all duration-300 border border-moss-line focus-within:w-[450px] focus-within:border-canopy focus-within:shadow-[0_0_12px_var(--canopy-glow)]"
         style={{
           background: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)',
-          border: '1px solid var(--moss-line)',
         }}
       >
         <Search size={14} style={{ color: 'var(--paper-dim)' }} />

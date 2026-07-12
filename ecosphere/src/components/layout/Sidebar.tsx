@@ -8,47 +8,97 @@ import {
   Settings,
   FileBarChart,
 } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface NavItem {
   to: string;
   label: string;
   icon: React.ElementType;
-  accent: string;
-  glow: string;
 }
 
 const sections: { title: string; items: NavItem[] }[] = [
   {
     title: 'Overview',
-    items: [{ to: '/', label: 'Dashboard', icon: LayoutDashboard, accent: '#ede8d8', glow: 'rgba(237,232,216,0.15)' }],
+    items: [{ to: '/', label: 'Dashboard', icon: LayoutDashboard }],
   },
   {
     title: 'ESG Pillars',
     items: [
-      { to: '/environmental', label: 'Environmental', icon: Leaf,       accent: '#3ecf7a', glow: 'rgba(62,207,122,0.18)' },
-      { to: '/social',        label: 'Social',        icon: Users,      accent: '#5b8dee', glow: 'rgba(91,141,238,0.18)' },
-      { to: '/governance',    label: 'Governance',    icon: ShieldCheck, accent: '#f5a623', glow: 'rgba(245,166,35,0.18)'  },
+      { to: '/environmental', label: 'Environmental', icon: Leaf },
+      { to: '/social',        label: 'Social',        icon: Users },
+      { to: '/governance',    label: 'Governance',    icon: ShieldCheck },
     ],
   },
   {
     title: 'Engage',
-    items: [{ to: '/gamification', label: 'Gamification', icon: Trophy, accent: '#a78bfa', glow: 'rgba(167,139,250,0.18)' }],
+    items: [{ to: '/gamification', label: 'Gamification', icon: Trophy }],
   },
   {
     title: 'System',
     items: [
-      { to: '/reports',  label: 'Reports',  icon: FileBarChart, accent: '#2dd4bf', glow: 'rgba(45,212,191,0.18)' },
-      { to: '/settings', label: 'Settings', icon: Settings,     accent: '#8a8274',  glow: 'rgba(138,130,116,0.12)' },
+      { to: '/reports',  label: 'Reports',  icon: FileBarChart },
+      { to: '/settings', label: 'Settings', icon: Settings },
     ],
   },
 ];
 
 export default function Sidebar() {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
+  const getThemeStyles = (to: string) => {
+    if (to === '/') {
+      return {
+        accent: isLight ? 'var(--paper)' : '#ede8d8',
+        glow: isLight ? 'rgba(13,31,21,0.06)' : 'rgba(237,232,216,0.12)',
+      };
+    }
+    if (to === '/environmental') {
+      return {
+        accent: 'var(--canopy)',
+        glow: 'var(--canopy-glow)',
+      };
+    }
+    if (to === '/social') {
+      return {
+        accent: 'var(--slate)',
+        glow: 'var(--slate-glow)',
+      };
+    }
+    if (to === '/governance') {
+      return {
+        accent: 'var(--amber)',
+        glow: 'var(--amber-glow)',
+      };
+    }
+    if (to === '/gamification') {
+      return {
+        accent: 'var(--purple)',
+        glow: 'var(--purple-glow)',
+      };
+    }
+    if (to === '/reports') {
+      return {
+        accent: 'var(--teal)',
+        glow: 'var(--teal-glow)',
+      };
+    }
+    if (to === '/settings') {
+      return {
+        accent: 'var(--paper-dim)',
+        glow: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(138,130,116,0.1)',
+      };
+    }
+    return { accent: 'var(--paper)', glow: 'transparent' };
+  };
+
   return (
     <aside
-      className="w-60 shrink-0 h-full flex flex-col border-r"
+      className="w-60 shrink-0 h-full flex flex-col border-r transition-all duration-300"
       style={{
-        background: 'linear-gradient(180deg, #0e1812 0%, #090e0c 100%)',
+        background: isLight
+          ? 'linear-gradient(180deg, #ffffff 0%, #f3faf5 100%)'
+          : 'linear-gradient(180deg, #0e1812 0%, #090e0c 100%)',
         borderColor: 'var(--moss-line)',
       }}
     >
@@ -86,31 +136,34 @@ export default function Sidebar() {
               {section.title}
             </div>
             <div className="flex flex-col gap-0.5">
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === '/'}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 py-2 rounded-lg text-sm transition-all duration-150 ${
-                      isActive ? 'font-semibold' : 'hover:bg-white/4'
-                    }`
-                  }
-                  style={({ isActive }) => ({
-                    paddingLeft: '10px',
-                    paddingRight: '10px',
-                    background: isActive
-                      ? `linear-gradient(90deg, ${item.glow}, transparent 80%)`
-                      : 'transparent',
-                    color: isActive ? item.accent : 'var(--paper-dim)',
-                    borderLeft: isActive ? `2px solid ${item.accent}` : '2px solid transparent',
-                    boxShadow: isActive ? `0 0 12px ${item.glow}` : 'none',
-                  })}
-                >
-                  <item.icon size={15} style={{ color: 'inherit', opacity: 1 }} strokeWidth={1.8} />
-                  <span className="text-[13px]">{item.label}</span>
-                </NavLink>
-              ))}
+              {section.items.map((item) => {
+                const { accent, glow } = getThemeStyles(item.to);
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2.5 py-2 rounded-lg text-sm transition-all duration-150 ${
+                        isActive ? 'font-semibold' : 'hover:bg-black/5 dark:hover:bg-white/5'
+                      }`
+                    }
+                    style={({ isActive }) => ({
+                      paddingLeft: '10px',
+                      paddingRight: '10px',
+                      background: isActive
+                        ? `linear-gradient(90deg, ${glow}, transparent 80%)`
+                        : 'transparent',
+                      color: isActive ? accent : 'var(--paper-dim)',
+                      borderLeft: isActive ? `2px solid ${accent}` : '2px solid transparent',
+                      boxShadow: isActive ? `0 0 12px ${glow}` : 'none',
+                    })}
+                  >
+                    <item.icon size={15} style={{ color: 'inherit', opacity: 1 }} strokeWidth={1.8} />
+                    <span className="text-[13px]">{item.label}</span>
+                  </NavLink>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -119,8 +172,11 @@ export default function Sidebar() {
       <div className="ledger-rule mx-4" />
       <div className="px-4 py-3">
         <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg"
-          style={{ background: 'rgba(62,207,122,0.06)', border: '1px solid rgba(62,207,122,0.14)' }}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-300"
+          style={{
+            background: 'var(--canopy-glow)',
+            borderColor: 'var(--moss-line)',
+          }}
         >
           <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--canopy)' }} />
           <div className="text-[10px] font-mono-data" style={{ color: 'var(--paper-dim)' }}>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import {
   db,
@@ -130,7 +131,7 @@ export default function Gamification() {
   // Helper to trigger badge auto-award checks
   const runBadgeChecks = async (employee: Employee) => {
     if (!config?.badgeAutoAward) return;
-    
+
     // Count stats
     const completedChallengesCount = participations.filter(
       (p) => p.employeeId === employee.id && p.approvalStatus === 'Approved'
@@ -138,7 +139,7 @@ export default function Gamification() {
 
     // Fetch CSR count
     const csrCount = 2; // Stub/mock value or fetch from employeeParticipations
-    
+
     await checkAndAwardBadges(
       employee,
       badges,
@@ -186,7 +187,7 @@ export default function Gamification() {
       });
 
       showToast({ message: `Approved! Credited ${challengeXp} XP to employee profile.`, type: 'success' });
-      
+
       const updatedEmp = employees.find((e) => e.id === part.employeeId);
       if (updatedEmp) {
         const empCopy = { ...updatedEmp, xp: updatedEmp.xp + challengeXp };
@@ -303,21 +304,10 @@ export default function Gamification() {
       ) : (
         <>
           {/* Simulation selector for Odoo hackathon validation */}
-          <div
-            className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl border"
-            style={{
-              background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(62,207,122,0.05))',
-              borderColor: 'rgba(245,166,35,0.25)',
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--grad-amber)' }}>
-                <span className="text-white text-sm">🎮</span>
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-wider font-bold" style={{ color: 'var(--amber)' }}>Hackathon Demo Mode</div>
-                <div className="text-xs mt-0.5" style={{ color: 'var(--paper-dim)' }}>Select a user to simulate their gamification view</div>
-              </div>
+          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border bg-white/5 border-moss-line">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-amber font-bold">Hackathon User Simulation</div>
+              <div className="text-sm text-paper mt-1">Select an active user to view gamification dashboard and test redemptions:</div>
             </div>
             <select
               value={activeEmpId}
@@ -326,8 +316,7 @@ export default function Gamification() {
                 setErrorMsg('');
                 setSuccessMsg('');
               }}
-              className="px-3 py-2 rounded-lg text-sm cursor-pointer font-semibold"
-              style={{ background: 'var(--moss-mid)', border: '1px solid var(--moss-line)', color: 'var(--paper)' }}
+              className="px-3 py-1.5 rounded bg-moss border border-moss-line text-paper font-semibold text-sm cursor-pointer"
             >
               {employees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
@@ -339,398 +328,339 @@ export default function Gamification() {
 
           {/* Hero Profile header */}
           {activeEmployee && (
-        <div
-          className="p-6 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-6 items-center relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, rgba(62,207,122,0.08) 0%, var(--ink-raised) 50%, rgba(91,141,238,0.06) 100%)',
-            border: '1px solid rgba(62,207,122,0.2)',
-            boxShadow: '0 0 40px rgba(62,207,122,0.06)',
-          }}
-        >
-          {/* Decorative glow */}
-          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse, rgba(245,166,35,0.12), transparent 70%)' }} />
-          <div className="flex items-center gap-4">
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0"
-              style={{
-                background: 'var(--grad-canopy)',
-                color: 'white',
-                boxShadow: '0 4px 16px rgba(62,207,122,0.4)',
-              }}
-            >
-              {activeEmployee.name[0]}
-            </div>
-            <div>
-              <h2 className="text-xl font-bold" style={{ color: 'var(--paper)' }}>{activeEmployee.name}</h2>
-              <p className="text-xs uppercase tracking-wider mt-0.5" style={{ color: 'var(--canopy)' }}>
-                {departments.find((d) => d.id === activeEmployee.departmentId)?.name || 'EcoSphere Member'}
-              </p>
-              <span className="mt-1 badge badge-green">{activeEmployee.role}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between text-xs font-mono-data" style={{ color: 'var(--paper-dim)' }}>
-              <span>XP Progress</span>
-              <span className="font-bold" style={{ color: 'var(--amber)' }}>{activeEmployee.xp} / 1,500 XP</span>
-            </div>
-            <div className="w-full h-3 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
-              <motion.div
-                className="h-full rounded-full"
-                style={{ background: 'var(--grad-amber)', boxShadow: '0 0 8px rgba(245,166,35,0.5)' }}
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min((activeEmployee.xp / 1500) * 100, 100)}%` }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
-              />
-            </div>
-            <div className="text-[10px] text-right font-mono-data" style={{ color: 'var(--paper-dim)' }}>
-              Next badge threshold: 1,500 XP
-            </div>
-            <div className="flex gap-2 mt-1">
-              <div className="flex-1 text-center p-2 rounded-lg" style={{ background: 'rgba(62,207,122,0.1)', border: '1px solid rgba(62,207,122,0.2)' }}>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--canopy)' }}>XP Earned</div>
-                <div className="text-base font-bold font-mono-data" style={{ color: 'var(--canopy)' }}>{activeEmployee.xp}</div>
-              </div>
-              <div className="flex-1 text-center p-2 rounded-lg" style={{ background: 'rgba(91,141,238,0.1)', border: '1px solid rgba(91,141,238,0.2)' }}>
-                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--slate)' }}>Badges</div>
-                <div className="text-base font-bold font-mono-data" style={{ color: 'var(--slate)' }}>
-                  {activeEmployee.badgeIds?.length || 0}
+            <div className="p-6 rounded-lg border grid grid-cols-1 md:grid-cols-3 gap-6 items-center" style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)' }}>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold bg-moss text-amber border border-moss-line">
+                  {activeEmployee.name[0]}
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold font-sans text-paper">{activeEmployee.name}</h2>
+                  <p className="text-xs text-paper-dim uppercase tracking-wider mt-0.5">
+                    {departments.find((d) => d.id === activeEmployee.departmentId)?.name || 'EcoSphere Member'}
+                  </p>
                 </div>
               </div>
+
+              {/* Animated XP Fill Bar */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-xs text-paper-dim font-mono-data">
+                  <span>XP Level progress</span>
+                  <span className="text-amber font-semibold">{activeEmployee.xp} XP</span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden border border-moss-line">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-amber to-amber-dim"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min((activeEmployee.xp / 1500) * 100, 100)}%` }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                  />
+                </div>
+                <div className="text-[10px] text-right text-paper-dim font-mono-data">
+                  Next badge threshold: 1,500 XP
+                </div>
+              </div>
+
+              {/* Point wallet balance */}
+              <div className="flex flex-col items-end md:border-l border-moss-line pl-6">
+                <span className="text-xs uppercase tracking-wider text-paper-dim">Redeemable Balance</span>
+                <span className="text-4xl font-extrabold font-mono-data text-amber mt-1">
+                  {activeEmployee.points.toLocaleString()}
+                  <span className="text-sm font-semibold text-paper-dim ml-1.5 uppercase font-sans">Points</span>
+                </span>
+              </div>
             </div>
+          )}
+
+          {/* Tabs */}
+          <div className="flex border-b animate-fade-in" style={{ borderColor: 'var(--moss-line)' }}>
+            {(
+              [
+                { id: 'challenges', label: 'Challenges Board' },
+                { id: 'approvals', label: 'Approvals Queue' },
+                { id: 'rewards', label: 'Rewards Catalog' },
+                { id: 'leaderboard', label: 'Organization Leaderboard' }
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setErrorMsg('');
+                  setSuccessMsg('');
+                }}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
+                  ? 'border-canopy text-paper font-semibold'
+                  : 'border-transparent text-paper-dim hover:text-paper'
+                  }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <div className="flex flex-col items-center justify-center p-4 rounded-xl md:border-l" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-            <span className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Redeemable Balance</span>
-            <span className="text-4xl font-extrabold font-mono-data mt-1" style={{ color: 'var(--amber)' }}>
-              {activeEmployee.points.toLocaleString()}
-            </span>
-            <span className="text-xs font-semibold uppercase" style={{ color: 'var(--paper-dim)' }}>Points</span>
-          </div>
-        </div>
-      )}
+          {errorMsg && (
+            <div className="p-3.5 rounded border border-alert bg-alert/10 text-sm text-alert font-medium animate-pulse">
+              {errorMsg}
+            </div>
+          )}
 
-      {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-xl animate-fade-in" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--moss-line)' }}>
-        {(
-          [
-            { id: 'challenges', label: '🏆 Challenges', color: 'var(--canopy)' },
-            { id: 'approvals', label: '✅ Approvals', color: 'var(--amber)' },
-            { id: 'rewards', label: '🎁 Rewards', color: 'var(--purple)' },
-            { id: 'leaderboard', label: '📊 Leaderboard', color: 'var(--slate)' }
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => {
-              setActiveTab(tab.id);
-              setErrorMsg('');
-              setSuccessMsg('');
-            }}
-            className="flex-1 px-3 py-2 text-xs font-semibold rounded-lg transition-all duration-150 cursor-pointer"
-            style={{
-              background: activeTab === tab.id ? 'var(--moss-mid)' : 'transparent',
-              color: activeTab === tab.id ? tab.color : 'var(--paper-dim)',
-              boxShadow: activeTab === tab.id ? '0 1px 4px rgba(0,0,0,0.3)' : 'none',
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+          {successMsg && (
+            <div className="p-3.5 rounded border border-canopy bg-canopy/10 text-sm text-paper font-medium">
+              {successMsg}
+            </div>
+          )}
 
-      {errorMsg && (
-        <div className="p-3.5 rounded border border-alert bg-alert/10 text-sm text-alert font-medium animate-pulse">
-          {errorMsg}
-        </div>
-      )}
-
-      {successMsg && (
-        <div className="p-3.5 rounded border border-canopy bg-canopy/10 text-sm text-paper font-medium">
-          {successMsg}
-        </div>
-      )}
-
-      {/* Sub tabs contents */}
-      {activeTab === 'challenges' && (
-        <div className="flex flex-col gap-6 animate-fade-in">
-          {/* Kanban Board */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {([
-              { status: 'Draft',        color: '#8a8274', grad: 'linear-gradient(135deg,#3d3a34,#2a2820)', btnBg: 'rgba(255,255,255,0.07)' },
-              { status: 'Active',       color: '#3ecf7a', grad: 'linear-gradient(135deg,rgba(62,207,122,0.12),rgba(30,100,55,0.08))', btnBg: 'rgba(62,207,122,0.15)' },
-              { status: 'Under Review', color: '#f5a623', grad: 'linear-gradient(135deg,rgba(245,166,35,0.12),rgba(120,80,10,0.08))', btnBg: 'rgba(245,166,35,0.15)' },
-              { status: 'Completed',    color: '#a78bfa', grad: 'linear-gradient(135deg,rgba(167,139,250,0.12),rgba(80,50,150,0.08))', btnBg: 'rgba(167,139,250,0.15)' },
-            ] as { status: Challenge['status'], color: string, grad: string, btnBg: string }[]).map(({ status, color, grad, btnBg }) => {
-              const list = challenges.filter((c) => c.status === status);
-              return (
-                <div
-                  key={status}
-                  className="p-3 rounded-xl flex flex-col gap-3 min-h-[300px]"
-                  style={{
-                    background: grad,
-                    border: `1px solid ${color}28`,
-                    boxShadow: `0 0 0 1px ${color}10 inset`,
-                  }}
-                >
-                  <div className="flex justify-between items-center pb-2 mb-1" style={{ borderBottom: `1px solid ${color}30` }}>
-                    <span className="text-xs uppercase tracking-wider font-bold" style={{ color }}>{status}</span>
-                    <span
-                      className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
-                      style={{ background: color, color: '#080f0c' }}
-                    >{list.length}</span>
-                  </div>
-                  {list.length === 0 && (
-                    <div className="flex-1 flex items-center justify-center text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>Empty</div>
-                  )}
-                  {list.map((c) => {
-                    const diffColor = c.difficulty === 'Hard' ? 'var(--alert)' : c.difficulty === 'Medium' ? 'var(--amber)' : 'var(--canopy)';
-                    return (
-                      <div
-                        key={c.id}
-                        className="p-3 rounded-lg flex flex-col gap-2.5"
-                        style={{ background: 'rgba(0,0,0,0.25)', border: `1px solid ${color}15` }}
-                      >
-                        <div>
-                          <h4 className="text-xs font-bold" style={{ color: 'var(--paper)' }}>{c.title}</h4>
-                          <p className="text-[10px] line-clamp-2 mt-1 leading-relaxed" style={{ color: 'var(--paper-dim)' }}>{c.description}</p>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] font-mono-data pt-1.5" style={{ borderTop: `1px solid ${color}15` }}>
-                          <span className="font-bold" style={{ color: 'var(--amber)' }}>+{c.xp} XP</span>
-                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold" style={{ color: diffColor, background: `${diffColor}18`, border: `1px solid ${diffColor}30` }}>{c.difficulty}</span>
-                        </div>
-                        <button
-                          onClick={() => handleAdvanceChallenge(c)}
-                          className="w-full py-1.5 text-[10px] uppercase font-bold text-center rounded-lg cursor-pointer transition-all hover:opacity-90"
-                          style={{ background: btnBg, color, border: `1px solid ${color}30` }}
-                        >
-                          Advance Status
-                        </button>
+          {/* Sub tabs contents */}
+          {activeTab === 'challenges' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              {/* Kanban Board */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {(['Draft', 'Active', 'Under Review', 'Completed'] as Challenge['status'][]).map((status) => {
+                  const list = challenges.filter((c) => c.status === status);
+                  return (
+                    <div key={status} className="p-3 rounded-lg bg-white/5 border border-moss-line flex flex-col gap-3 min-h-[300px]">
+                      <div className="flex justify-between items-center border-b border-moss-line pb-2 mb-1">
+                        <span className="text-xs uppercase tracking-wider text-paper font-bold">{status}</span>
+                        <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono-data text-paper-dim">{list.length}</span>
                       </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Archived Challenges Collapsible Section */}
-          <div className="border border-moss-line rounded-lg">
-            <button
-              onClick={() => setShowArchived(!showArchived)}
-              className="w-full flex justify-between items-center px-4 py-3 text-xs uppercase tracking-wider text-paper-dim hover:text-paper font-bold bg-white/5 cursor-pointer"
-            >
-              <span>Archived Challenges Archive ({challenges.filter((c) => c.status === 'Archived').length})</span>
-              <span>{showArchived ? '▲ Collapse' : '▼ Expand'}</span>
-            </button>
-            {showArchived && (
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border-t border-moss-line">
-                {challenges.filter((c) => c.status === 'Archived').map((c) => (
-                  <div key={c.id} className="p-3 rounded bg-white/5 border border-moss-line flex flex-col gap-2">
-                    <h4 className="text-xs font-bold text-paper">{c.title}</h4>
-                    <span className="text-[10px] text-paper-dim line-clamp-2">{c.description}</span>
-                    <span className="text-[10px] font-mono-data text-amber font-semibold mt-1">+{c.xp} XP (Archived)</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'approvals' && (
-        <Card title="Challenge Submissions Review Queue">
-          <div className="overflow-x-auto my-2 animate-fade-in">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Employee</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Challenge</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Evidence proof</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Progress Bar</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Status</th>
-                  <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim font-sans">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {participations.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8">
-                      <EmptyState
-                        title="All caught up"
-                        description="No challenge submissions awaiting evaluation."
-                      />
-                    </td>
-                  </tr>
-                ) : (
-                  participations.map((part) => {
-                    const emp = employees.find((e) => e.id === part.employeeId);
-                    const chal = challenges.find((c) => c.id === part.challengeId);
-                    if (!chal) return null;
-                    return (
-                      <tr key={part.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
-                        <td className="py-2.5 px-3 text-sm text-paper font-semibold">{emp ? emp.name : 'Unknown'}</td>
-                        <td className="py-2.5 px-3 text-sm text-paper-dim">
-                          <div>{chal.title}</div>
-                          <span className="text-[10px] text-amber font-mono-data">+{chal.xp} XP</span>
-                        </td>
-                        <td className="py-2.5 px-3 text-sm font-mono-data">
-                          {part.proofUrl ? (
-                            <a href={part.proofUrl} target="_blank" rel="noreferrer" className="text-canopy underline hover:text-canopy-dim">
-                              View Evidence
-                            </a>
-                          ) : (
-                            <span className="text-paper-dim">Self-Declared (No evidence link)</span>
-                          )}
-                        </td>
-                        <td className="py-2.5 px-3 text-sm font-mono-data">
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 h-1.5 rounded bg-white/5 overflow-hidden">
-                              <div className="h-full bg-canopy" style={{ width: `${part.progress}%` }} />
-                            </div>
-                            <span>{part.progress}%</span>
+                      {list.map((c) => (
+                        <div key={c.id} className="p-3 rounded bg-ink-raised border border-moss-line flex flex-col gap-2.5 shadow-sm">
+                          <div>
+                            <h4 className="text-xs font-bold text-paper font-sans">{c.title}</h4>
+                            <p className="text-[10px] text-paper-dim line-clamp-2 mt-1 leading-relaxed">{c.description}</p>
                           </div>
-                        </td>
-                        <td className="py-2.5 px-3 text-sm font-semibold">
-                          <span className={`px-2 py-0.5 rounded text-[10px] ${part.approvalStatus === 'Approved' ? 'bg-canopy/15 text-canopy' : part.approvalStatus === 'Rejected' ? 'bg-alert/15 text-alert' : 'bg-amber/15 text-amber'}`}>
-                            {part.approvalStatus}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-3 text-right">
-                          {part.approvalStatus === 'Pending' && (
-                            <div className="flex gap-2 justify-end">
-                              <button
-                                onClick={() => handleApproveParticipation(part, chal.xp)}
-                                className="text-xs px-2.5 py-1 rounded bg-canopy hover:bg-canopy-dim text-white font-semibold font-sans cursor-pointer"
-                              >
-                                Approve
-                              </button>
-                            </div>
-                          )}
+                          <div className="flex justify-between items-center text-[10px] font-mono-data pt-1.5 border-t border-moss-line/50">
+                            <span className="text-amber font-semibold">+{c.xp} XP</span>
+                            <span className="px-1.5 py-0.5 rounded bg-white/5 text-paper-dim">{c.difficulty}</span>
+                          </div>
+                          <button
+                            onClick={() => handleAdvanceChallenge(c)}
+                            className="w-full py-1 text-[10px] uppercase font-bold text-center rounded bg-moss hover:bg-white/10 text-paper-dim hover:text-paper font-sans cursor-pointer transition-colors"
+                          >
+                            Advance Status
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Archived Challenges Collapsible Section */}
+              <div className="border border-moss-line rounded-lg">
+                <button
+                  onClick={() => setShowArchived(!showArchived)}
+                  className="w-full flex justify-between items-center px-4 py-3 text-xs uppercase tracking-wider text-paper-dim hover:text-paper font-bold bg-white/5 cursor-pointer"
+                >
+                  <span>Archived Challenges Archive ({challenges.filter((c) => c.status === 'Archived').length})</span>
+                  <span>{showArchived ? '▲ Collapse' : '▼ Expand'}</span>
+                </button>
+                {showArchived && (
+                  <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border-t border-moss-line">
+                    {challenges.filter((c) => c.status === 'Archived').map((c) => (
+                      <div key={c.id} className="p-3 rounded bg-white/5 border border-moss-line flex flex-col gap-2">
+                        <h4 className="text-xs font-bold text-paper">{c.title}</h4>
+                        <span className="text-[10px] text-paper-dim line-clamp-2">{c.description}</span>
+                        <span className="text-[10px] font-mono-data text-amber font-semibold mt-1">+{c.xp} XP (Archived)</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'approvals' && (
+            <Card title="Challenge Submissions Review Queue">
+              <div className="overflow-x-auto my-2 animate-fade-in">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Employee</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Challenge</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Evidence proof</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Progress Bar</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Status</th>
+                      <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim font-sans">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {participations.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8">
+                          <EmptyState
+                            title="All caught up"
+                            description="No challenge submissions awaiting evaluation."
+                          />
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-
-      {activeTab === 'rewards' && (
-        <div className="flex flex-col gap-6 animate-fade-in">
-          {/* Rewards Catalog */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {rewards.map((reward) => {
-              const canAfford = activeEmployee ? activeEmployee.points >= reward.pointsRequired : false;
-              const hasStock = reward.stock > 0;
-              const activeRedemption = canAfford && hasStock;
-              return (
-                <div key={reward.id} className="p-4 rounded-lg border bg-white/5 border-moss-line flex flex-col justify-between gap-4">
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-paper-dim">Reward Item</span>
-                    <h3 className="text-sm font-bold text-paper font-sans mt-0.5">{reward.name}</h3>
-                    <p className="text-[11px] text-paper-dim leading-relaxed mt-1.5">{reward.description}</p>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <div className="flex justify-between items-center text-xs font-mono-data border-t border-moss-line/50 pt-3">
-                      <span className="text-amber font-bold">{reward.pointsRequired} pts</span>
-                      <span style={{ color: hasStock ? 'var(--paper-dim)' : 'var(--alert)' }}>
-                        {hasStock ? `${reward.stock} left` : 'Out of Stock'}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => handleRedeemReward(reward)}
-                      disabled={!activeRedemption}
-                      title={
-                        !hasStock
-                          ? "Out of stock - check back later"
-                          : !canAfford
-                          ? `Insufficient points - you need ${reward.pointsRequired - (activeEmployee?.points || 0)} more points`
-                          : undefined
-                      }
-                      className={`w-full py-2 rounded text-xs font-bold uppercase transition-colors cursor-pointer ${
-                        activeRedemption
-                          ? 'bg-amber hover:bg-amber-dim text-ink font-extrabold'
-                          : 'bg-white/5 text-paper-dim cursor-not-allowed border border-moss-line'
-                      }`}
-                    >
-                      Redeem Reward
-                    </button>
-                    {!activeRedemption && (
-                      <span className="text-[10px] text-alert text-center block mt-1">
-                        {!hasStock
-                          ? 'Item Out of Stock'
-                          : `Need ${reward.pointsRequired - (activeEmployee?.points || 0)} more pts`}
-                      </span>
+                    ) : (
+                      participations.map((part) => {
+                        const emp = employees.find((e) => e.id === part.employeeId);
+                        const chal = challenges.find((c) => c.id === part.challengeId);
+                        if (!chal) return null;
+                        return (
+                          <tr key={part.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
+                            <td className="py-2.5 px-3 text-sm text-paper font-semibold">{emp ? emp.name : 'Unknown'}</td>
+                            <td className="py-2.5 px-3 text-sm text-paper-dim">
+                              <div>{chal.title}</div>
+                              <span className="text-[10px] text-amber font-mono-data">+{chal.xp} XP</span>
+                            </td>
+                            <td className="py-2.5 px-3 text-sm font-mono-data">
+                              {part.proofUrl ? (
+                                <a href={part.proofUrl} target="_blank" rel="noreferrer" className="text-canopy underline hover:text-canopy-dim">
+                                  View Evidence
+                                </a>
+                              ) : (
+                                <span className="text-paper-dim">Self-Declared (No evidence link)</span>
+                              )}
+                            </td>
+                            <td className="py-2.5 px-3 text-sm font-mono-data">
+                              <div className="flex items-center gap-2">
+                                <div className="w-20 h-1.5 rounded bg-white/5 overflow-hidden">
+                                  <div className="h-full bg-canopy" style={{ width: `${part.progress}%` }} />
+                                </div>
+                                <span>{part.progress}%</span>
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-3 text-sm font-semibold">
+                              <span className={`px-2 py-0.5 rounded text-[10px] ${part.approvalStatus === 'Approved' ? 'bg-canopy/15 text-canopy' : part.approvalStatus === 'Rejected' ? 'bg-alert/15 text-alert' : 'bg-amber/15 text-amber'}`}>
+                                {part.approvalStatus}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              {part.approvalStatus === 'Pending' && (
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    onClick={() => handleApproveParticipation(part, chal.xp)}
+                                    className="text-xs px-2.5 py-1 rounded bg-canopy hover:bg-canopy-dim text-white font-semibold font-sans cursor-pointer"
+                                  >
+                                    Approve
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
 
-      {activeTab === 'leaderboard' && (
-        <Card title="Organization ESG Leaderboard" eyebrow="Cumulative Performance">
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-xs text-paper-dim uppercase font-semibold">Active Ranking</div>
-            <select
-              value={selectedDeptId}
-              onChange={(e) => setSelectedDeptId(e.target.value)}
-              className="px-2 py-1 rounded bg-moss border border-moss-line text-sm text-paper focus:outline-none focus:border-canopy cursor-pointer"
-            >
-              <option value="">All Departments</option>
-              {departments.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {activeTab === 'rewards' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              {/* Rewards Catalog */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {rewards.map((reward) => {
+                  const canAfford = activeEmployee ? activeEmployee.points >= reward.pointsRequired : false;
+                  const hasStock = reward.stock > 0;
+                  const activeRedemption = canAfford && hasStock;
+                  return (
+                    <div key={reward.id} className="p-4 rounded-lg border bg-white/5 border-moss-line flex flex-col justify-between gap-4">
+                      <div>
+                        <span className="text-[9px] uppercase tracking-wider text-paper-dim">Reward Item</span>
+                        <h3 className="text-sm font-bold text-paper font-sans mt-0.5">{reward.name}</h3>
+                        <p className="text-[11px] text-paper-dim leading-relaxed mt-1.5">{reward.description}</p>
+                      </div>
 
-          <div className="overflow-x-auto animate-fade-in">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans w-12">Rank</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans">Employee</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans">Department</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans text-right">Performance XP</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboardData.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="py-4 text-center text-sm text-paper-dim">
-                      No leaderboard entries match filters.
-                    </td>
-                  </tr>
-                ) : (
-                  leaderboardData.map((e) => (
-                    <tr
-                      key={e.id}
-                      className={`border-b hover:bg-white/5 ${e.id === activeEmpId ? 'bg-amber/5 font-semibold border-l-2 border-l-amber' : ''}`}
-                      style={{ borderColor: 'var(--moss-line)' }}
-                    >
-                      <td className="py-2.5 px-3 text-sm font-mono-data text-amber">{e.rank}</td>
-                      <td className="py-2.5 px-3 text-sm text-paper">{e.name}</td>
-                      <td className="py-2.5 px-3 text-sm text-paper-dim">{e.deptName}</td>
-                      <td className="py-2.5 px-3 text-sm font-mono-data text-right text-paper">{e.xp} XP</td>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex justify-between items-center text-xs font-mono-data border-t border-moss-line/50 pt-3">
+                          <span className="text-amber font-bold">{reward.pointsRequired} pts</span>
+                          <span style={{ color: hasStock ? 'var(--paper-dim)' : 'var(--alert)' }}>
+                            {hasStock ? `${reward.stock} left` : 'Out of Stock'}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => handleRedeemReward(reward)}
+                          disabled={!activeRedemption}
+                          title={
+                            !hasStock
+                              ? "Out of stock - check back later"
+                              : !canAfford
+                                ? `Insufficient points - you need ${reward.pointsRequired - (activeEmployee?.points || 0)} more points`
+                                : undefined
+                          }
+                          className={`w-full py-2 rounded text-xs font-bold uppercase transition-colors cursor-pointer ${activeRedemption
+                            ? 'bg-amber hover:bg-amber-dim text-ink font-extrabold'
+                            : 'bg-white/5 text-paper-dim cursor-not-allowed border border-moss-line'
+                            }`}
+                        >
+                          Redeem Reward
+                        </button>
+                        {!activeRedemption && (
+                          <span className="text-[10px] text-alert text-center block mt-1">
+                            {!hasStock
+                              ? 'Item Out of Stock'
+                              : `Need ${reward.pointsRequired - (activeEmployee?.points || 0)} more pts`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'leaderboard' && (
+            <Card title="Organization ESG Leaderboard" eyebrow="Cumulative Performance">
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-xs text-paper-dim uppercase font-semibold">Active Ranking</div>
+                <select
+                  value={selectedDeptId}
+                  onChange={(e) => setSelectedDeptId(e.target.value)}
+                  className="px-2 py-1 rounded bg-moss border border-moss-line text-sm text-paper focus:outline-none focus:border-canopy cursor-pointer"
+                >
+                  <option value="">All Departments</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="overflow-x-auto animate-fade-in">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans w-12">Rank</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans">Employee</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans">Department</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim font-sans text-right">Performance XP</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-      </>
+                  </thead>
+                  <tbody>
+                    {leaderboardData.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-4 text-center text-sm text-paper-dim">
+                          No leaderboard entries match filters.
+                        </td>
+                      </tr>
+                    ) : (
+                      leaderboardData.map((e) => (
+                        <tr
+                          key={e.id}
+                          className={`border-b hover:bg-white/5 ${e.id === activeEmpId ? 'bg-amber/5 font-semibold border-l-2 border-l-amber' : ''}`}
+                          style={{ borderColor: 'var(--moss-line)' }}
+                        >
+                          <td className="py-2.5 px-3 text-sm font-mono-data text-amber">{e.rank}</td>
+                          <td className="py-2.5 px-3 text-sm text-paper">{e.name}</td>
+                          <td className="py-2.5 px-3 text-sm text-paper-dim">{e.deptName}</td>
+                          <td className="py-2.5 px-3 text-sm font-mono-data text-right text-paper">{e.xp} XP</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Celebratory Badge Unlock Framer Motion Overlay */}
