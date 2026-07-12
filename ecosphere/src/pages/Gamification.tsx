@@ -304,27 +304,33 @@ export default function Gamification() {
       ) : (
         <>
           {/* Simulation selector for Odoo hackathon validation */}
-          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border bg-white/5 border-moss-line">
-            <div>
-              <div className="text-xs uppercase tracking-wider text-amber font-bold">Hackathon User Simulation</div>
-              <div className="text-sm text-paper mt-1">Select an active user to view gamification dashboard and test redemptions:</div>
+          <Card
+            accentColor="var(--amber)"
+            className="mb-6"
+            noPadding
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--amber)' }}>Hackathon User Simulation</div>
+                <div className="text-sm text-paper mt-1">Select an active user to view gamification dashboard and test redemptions:</div>
+              </div>
+              <select
+                value={activeEmpId}
+                onChange={(e) => {
+                  setActiveEmpId(e.target.value);
+                  setErrorMsg('');
+                  setSuccessMsg('');
+                }}
+                className="px-3 py-1.5 rounded bg-moss border border-moss-line text-paper font-semibold text-sm cursor-pointer focus:outline-none focus:border-amber"
+              >
+                {employees.map((emp) => (
+                  <option key={emp.id} value={emp.id} style={{ background: 'var(--ink-raised)', color: 'var(--paper)' }}>
+                    {emp.name} ({emp.role} · {emp.xp} XP · {emp.points} pts)
+                  </option>
+                ))}
+              </select>
             </div>
-            <select
-              value={activeEmpId}
-              onChange={(e) => {
-                setActiveEmpId(e.target.value);
-                setErrorMsg('');
-                setSuccessMsg('');
-              }}
-              className="px-3 py-1.5 rounded bg-moss border border-moss-line text-paper font-semibold text-sm cursor-pointer"
-            >
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.name} ({emp.role} · {emp.xp} XP · {emp.points} pts)
-                </option>
-              ))}
-            </select>
-          </div>
+          </Card>
 
           {/* Hero Profile header */}
           {activeEmployee && (
@@ -628,9 +634,9 @@ export default function Gamification() {
                   onChange={(e) => setSelectedDeptId(e.target.value)}
                   className="px-2 py-1 rounded bg-moss border border-moss-line text-sm text-paper focus:outline-none focus:border-canopy cursor-pointer"
                 >
-                  <option value="">All Departments</option>
+                  <option value="" style={{ background: 'var(--ink-raised)', color: 'var(--paper)' }}>All Departments</option>
                   {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
+                    <option key={d.id} value={d.id} style={{ background: 'var(--ink-raised)', color: 'var(--paper)' }}>
                       {d.name}
                     </option>
                   ))}
