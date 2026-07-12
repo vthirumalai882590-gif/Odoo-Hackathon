@@ -734,8 +734,8 @@ export default function Governance() {
                         </td>
                         <td className="py-2.5 px-3 text-sm text-paper font-semibold">{emp.name}</td>
                         <td className="py-2.5 px-3 text-sm text-paper-dim">{pol.title}</td>
-                        <td className="py-2.5 px-3 text-sm font-semibold">
-                          <span className={`px-2 py-0.5 rounded text-[10px] ${ack.acknowledgedAt ? 'bg-canopy/15 text-canopy' : 'bg-amber/15 text-amber'}`}>
+                        <td className="py-2.5 px-3 text-sm font-semibold whitespace-nowrap">
+                          <span className={`px-2 py-0.5 rounded text-[10px] whitespace-nowrap inline-block ${ack.acknowledgedAt ? 'bg-canopy/15 text-canopy' : 'bg-amber/15 text-amber'}`}>
                             {ack.acknowledgedAt ? 'Acknowledged' : 'Pending Signoff'}
                           </span>
                         </td>
@@ -980,7 +980,7 @@ export default function Governance() {
                             {iss.status !== 'Resolved' ? (
                               <div className="flex gap-2 justify-end">
                                 {isOverdue && (
-                                  <span className="px-2 py-0.5 rounded bg-alert text-white text-[9px] font-bold tracking-wider uppercase animate-pulse self-center" title="Proactive Risk Alert: Triggers flag before escalations (Assent Grounded)">
+                                  <span className="px-2 py-0.5 rounded bg-alert text-white text-[9px] font-bold tracking-wider uppercase animate-pulse self-center whitespace-nowrap inline-block" title="Proactive Risk Alert: Triggers flag before escalations (Assent Grounded)">
                                     Proactive Risk Alert
                                   </span>
                                 )}

@@ -422,8 +422,8 @@ export default function Environmental() {
                     return filteredFactors.map((ef) => (
                       <tr key={ef.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
                         <td className="py-2.5 px-3 text-sm font-medium text-paper">{ef.activityType}</td>
-                        <td className="py-2.5 px-3 text-sm">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-canopy/10 text-canopy border border-canopy/20">
+                        <td className="py-2.5 px-3 text-sm whitespace-nowrap">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-canopy/10 text-canopy border border-canopy/20 whitespace-nowrap inline-block">
                             Scope {ef.scope}
                           </span>
                         </td>
@@ -619,13 +619,13 @@ export default function Environmental() {
                             <td className="py-2.5 px-3 text-sm font-mono-data text-canopy font-bold">
                               {tx.calculatedEmissions.toFixed(1)} <span className="text-[10px] text-paper-dim">kg CO2e</span>
                             </td>
-                            <td className="py-2.5 px-3 text-sm">
+                            <td className="py-2.5 px-3 text-sm whitespace-nowrap">
                               {isQualitySane ? (
-                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
+                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
                                   Complete
                                 </span>
                               ) : (
-                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
+                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
                                   Needs Review
                                 </span>
                               )}

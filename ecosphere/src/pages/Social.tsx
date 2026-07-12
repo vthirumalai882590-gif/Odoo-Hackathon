@@ -695,13 +695,13 @@ export default function Social() {
                             <span className="text-alert font-medium">No File Uploaded</span>
                           )}
                         </td>
-                        <td className="py-2.5 px-3 text-sm">
+                        <td className="py-2.5 px-3 text-sm whitespace-nowrap">
                           {isQualitySane ? (
-                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Evidence url exists and is valid link">
+                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Evidence url exists and is valid link">
                               Complete
                             </span>
                           ) : (
-                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Missing proof file link attachment">
+                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Missing proof file link attachment">
                               Needs Review
                             </span>
                           )}

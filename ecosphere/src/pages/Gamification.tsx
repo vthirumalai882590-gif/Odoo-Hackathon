@@ -881,13 +881,13 @@ export default function Gamification() {
                                 <span>{part.progress}%</span>
                               </div>
                             </td>
-                            <td className="py-2.5 px-3 text-sm">
+                            <td className="py-2.5 px-3 text-sm whitespace-nowrap">
                               {isQualitySane ? (
-                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Evidence proof is complete & progress is 100%">
+                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Evidence proof is complete & progress is 100%">
                                   Complete
                                 </span>
                               ) : (
-                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Incomplete progress or missing evidence URL link">
+                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Incomplete progress or missing evidence URL link">
                                   Needs Review
                                 </span>
                               )}

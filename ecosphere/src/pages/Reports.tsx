@@ -604,13 +604,13 @@ export default function Reports() {
                                           <td className="py-1.5 text-right font-mono-data text-canopy font-semibold">
                                             {tx.calculatedEmissions.toFixed(1)} <span className="text-[10px] text-paper-dim">kg CO2e</span>
                                           </td>
-                                          <td className="py-1.5 text-right">
+                                           <td className="py-1.5 text-right whitespace-nowrap">
                                             {isQualitySane ? (
-                                              <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
+                                              <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
                                                 Complete
                                               </span>
                                             ) : (
-                                              <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
+                                              <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
                                                 Needs Review
                                               </span>
                                             )}
@@ -853,13 +853,13 @@ export default function Reports() {
                           {renderHighlightedDescription(row.details)}
                         </td>
                         <td className="py-2.5 px-3 text-sm font-mono-data text-right text-paper-dim">{row.scoreChange}</td>
-                        <td className="py-2.5 px-3 text-sm text-right">
+                        <td className="py-2.5 px-3 text-sm text-right whitespace-nowrap">
                           {row.isQualitySane ? (
-                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Valid and complete entry">
+                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Valid and complete entry">
                               Complete
                             </span>
                           ) : (
-                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Incomplete or warning entry">
+                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold whitespace-nowrap inline-block" title="Databricks/Trifacta Grounded Quality: Incomplete or warning entry">
                               Needs Review
                             </span>
                           )}
