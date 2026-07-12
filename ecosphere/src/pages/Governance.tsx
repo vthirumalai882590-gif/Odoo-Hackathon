@@ -51,16 +51,48 @@ export default function Governance() {
   // AI Helper States
   const [aiSeverityLoading, setAiSeverityLoading] = useState(false);
   const [aiSeverityExplanation, setAiSeverityExplanation] = useState('');
+  const [aiSeverityKeywords, setAiSeverityKeywords] = useState<string[]>([]);
+
+  const RISK_KEYWORDS = [
+    'spill', 'leak', 'fire', 'injury', 'lawsuit', 'hazard', 'toxic', 'illegal',
+    'non-compliance', 'violation', 'breach', 'fine', 'penalty', 'fraud', 'accident',
+    'hazardous', 'contaminate', 'radiation', 'safety', 'warning', 'failed',
+    'overdue', 'missing', 'delay', 'gap', 'defect'
+  ];
+
+  const renderHighlightedDescription = (text: string) => {
+    if (!text) return '';
+    const parts = text.split(new RegExp(`\\b(${RISK_KEYWORDS.join('|')})\\b`, 'gi'));
+    return parts.map((part, i) => {
+      if (RISK_KEYWORDS.includes(part.toLowerCase())) {
+        return (
+          <span
+            key={i}
+            className="bg-alert/10 text-alert border border-alert/25 px-1 py-0.2 rounded font-semibold text-[11px] mx-0.5 animate-fade-in"
+            title="RepRisk Flagged Risk Word"
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
 
   const handleSuggestSeverity = async () => {
     if (!issueForm.description.trim()) return;
     setAiSeverityLoading(true);
     setErrorMsg('');
     setAiSeverityExplanation('');
+    setAiSeverityKeywords([]);
     try {
       const result = await callEsgAI('suggestSeverity', { description: issueForm.description });
       setIssueForm({ ...issueForm, severity: result.severity });
       setAiSeverityExplanation(result.explanation);
+      
+      const descLower = issueForm.description.toLowerCase();
+      const matched = RISK_KEYWORDS.filter(k => descLower.includes(k));
+      setAiSeverityKeywords(matched);
     } catch (e: any) {
       setErrorMsg('AI Severity suggestion failed: ' + e.message);
     } finally {
@@ -912,7 +944,7 @@ export default function Governance() {
                           style={{ borderColor: 'var(--moss-line)' }}
                         >
                           <td className="py-2.5 px-3 text-sm text-paper font-semibold">{aud ? aud.title : 'External'}</td>
-                          <td className="py-2.5 px-3 text-sm text-paper-dim">{iss.description}</td>
+                          <td className="py-2.5 px-3 text-sm text-paper-dim">{renderHighlightedDescription(iss.description)}</td>
                           <td className="py-2.5 px-3 text-sm text-paper">{owner ? owner.name : 'Unassigned'}</td>
                           <td className="py-2.5 px-3 text-sm font-mono-data">{iss.dueDate}</td>
                           <td className="py-2.5 px-3 text-sm">
@@ -934,8 +966,8 @@ export default function Governance() {
                             {iss.status !== 'Resolved' ? (
                               <div className="flex gap-2 justify-end">
                                 {isOverdue && (
-                                  <span className="px-2 py-0.5 rounded bg-alert text-white text-[9px] font-bold tracking-wider uppercase animate-pulse self-center">
-                                    Overdue
+                                  <span className="px-2 py-0.5 rounded bg-alert text-white text-[9px] font-bold tracking-wider uppercase animate-pulse self-center" title="Proactive Risk Alert: Triggers flag before escalations (Assent Grounded)">
+                                    Proactive Risk Alert
                                   </span>
                                 )}
                                 <button
@@ -1036,27 +1068,39 @@ export default function Governance() {
                   className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy placeholder:opacity-50"
                 />
                 
-                {/* AI Severity recommender */}
-                <div className="mt-2 flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={handleSuggestSeverity}
-                    disabled={aiSeverityLoading || !issueForm.description.trim()}
-                    className="py-1 px-3 text-[10px] font-bold uppercase rounded bg-moss hover:bg-white/10 text-paper-dim hover:text-paper cursor-pointer transition-colors"
-                  >
-                    {aiSeverityLoading ? 'Recommending...' : 'AI Recommend Severity'}
-                  </button>
+                {/* AI Severity recommender (RepRisk + Assent Mode) */}
+                <div className="mt-2 flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={handleSuggestSeverity}
+                      disabled={aiSeverityLoading || !issueForm.description.trim()}
+                      className="py-1 px-3 text-[10px] font-bold uppercase rounded bg-moss hover:bg-white/10 text-paper-dim hover:text-paper cursor-pointer transition-colors"
+                    >
+                      {aiSeverityLoading ? 'Recommending...' : 'AI Recommend Severity (RepRisk Mode)'}
+                    </button>
+                    {aiSeverityExplanation && (
+                      <span className="px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[9px] font-mono-data font-semibold">
+                        AI-SUGGESTED
+                      </span>
+                    )}
+                  </div>
                   {aiSeverityExplanation && (
-                    <span className="px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[9px] font-mono-data font-semibold">
-                      AI-SUGGESTED
-                    </span>
+                    <div className="mt-1 p-2.5 rounded bg-amber/10 border border-amber/30 text-[11px] flex flex-col gap-2">
+                      <div className="text-paper italic">Reasoning: "{aiSeverityExplanation}"</div>
+                      {aiSeverityKeywords.length > 0 && (
+                        <div className="text-[10px] text-alert font-bold flex flex-wrap gap-1.5 items-center">
+                          <span>Risk Signals Flagged:</span>
+                          {aiSeverityKeywords.map((word) => (
+                            <span key={word} className="px-1.5 py-0.2 rounded bg-alert/15 text-alert border border-alert/25 font-semibold">
+                              {word}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
-                {aiSeverityExplanation && (
-                  <div className="mt-2 p-2 rounded bg-amber/10 border border-amber/30 text-[11px] text-paper-dim italic">
-                    Reasoning: "{aiSeverityExplanation}"
-                  </div>
-                )}
               </div>
 
               <button

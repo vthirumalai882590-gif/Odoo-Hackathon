@@ -212,6 +212,10 @@ export default function Dashboard() {
     };
   }).sort((a, b) => b.total - a.total);
 
+  const avgTotalScore = sortedDepartments.length > 0
+    ? sortedDepartments.reduce((sum, d) => sum + d.total, 0) / sortedDepartments.length
+    : 100;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-paper-dim">
@@ -278,7 +282,7 @@ export default function Dashboard() {
             label="Open compliance"
             value={openComplianceCount.toString()}
             accent={openComplianceCount > 0 ? 'var(--alert)' : 'var(--canopy)'}
-            delta={overdueCount > 0 ? `${overdueCount} overdue` : '0 overdue'}
+            delta={overdueCount > 0 ? `${overdueCount} Proactive Risk Alerts` : '0 Risk Alerts'}
             deltaPositive={overdueCount === 0}
             icon={<span style={{ fontSize: '14px' }}>⚖️</span>}
           />
@@ -297,7 +301,7 @@ export default function Dashboard() {
           style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
         >
           <div>
-            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--purple)' }}>AI Archetype</div>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--purple)' }}>AI Analyst (FactSet + Preqin Mode)</div>
             <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Executive Summary & Projections</h3>
           </div>
           {!aiSummary ? (
@@ -368,19 +372,34 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {sortedDepartments.map((dept) => (
-                  <tr key={dept.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <td className="py-2.5 px-4 text-xs font-mono-data font-semibold" style={{ color: 'var(--paper-dim)' }}>{dept.code}</td>
-                    <td className="py-2.5 px-4 text-xs" style={{ color: 'var(--paper)' }}>{dept.name}</td>
-                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--canopy)' }}>{dept.env}</td>
-                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--slate)' }}>{dept.soc}</td>
-                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--amber)' }}>{dept.gov}</td>
-                    <td className="py-2.5 px-4 text-xs font-mono-data text-right font-bold" style={{ color: 'var(--paper)' }}>{dept.total}</td>
-                  </tr>
-                ))}
+                {sortedDepartments.map((dept) => {
+                  const scoreDiff = dept.total - avgTotalScore;
+                  const scoreDiffPercent = avgTotalScore > 0 ? (scoreDiff / avgTotalScore) * 100 : 0;
+                  const formattedDiff = scoreDiffPercent >= 0 ? `+${scoreDiffPercent.toFixed(0)}%` : `${scoreDiffPercent.toFixed(0)}%`;
+                  return (
+                    <tr key={dept.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <td className="py-2.5 px-4 text-xs font-mono-data font-semibold" style={{ color: 'var(--paper-dim)' }}>{dept.code}</td>
+                      <td className="py-2.5 px-4 text-xs" style={{ color: 'var(--paper)' }}>{dept.name}</td>
+                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--canopy)' }}>{dept.env}</td>
+                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--slate)' }}>{dept.soc}</td>
+                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--amber)' }}>{dept.gov}</td>
+                      <td className="py-2.5 px-4 text-xs font-mono-data text-right font-bold" style={{ color: 'var(--paper)' }}>
+                        <div>{dept.total}</div>
+                        <div
+                          className={`text-[9px] font-sans font-normal mt-0.5 ${
+                            scoreDiff >= 0 ? 'text-canopy' : 'text-alert'
+                          }`}
+                          title="Preqin/FactSet Comparative Benchmark vs. Org Average"
+                        >
+                          {formattedDiff} vs avg
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

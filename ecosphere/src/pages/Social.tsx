@@ -617,6 +617,7 @@ export default function Social() {
                   <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Activity Name</th>
                   <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Rewards Credit</th>
                   <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Evidence proof</th>
+                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Quality</th>
                   <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Status</th>
                   <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim font-sans">Actions</th>
                 </tr>
@@ -627,7 +628,7 @@ export default function Social() {
                   if (participations.length === 0 || pendingCount === 0) {
                     return (
                       <tr>
-                        <td colSpan={7} className="py-8">
+                        <td colSpan={8} className="py-8">
                           <EmptyState
                             title="All caught up"
                             description="No participation requested awaiting approval."
@@ -640,6 +641,7 @@ export default function Social() {
                   return participations.map((part) => {
                     const emp = employees.find((e) => e.id === part.employeeId);
                     const act = activities.find((a) => a.id === part.activityId);
+                    const isQualitySane = part.proofUrl && part.proofUrl.startsWith('http');
                     return (
                       <tr key={part.id} className="border-b hover:bg-white/5 transition-colors" style={{ borderColor: 'var(--moss-line)' }}>
                         <td className="py-2.5 px-3 text-sm">
@@ -677,6 +679,17 @@ export default function Social() {
                             </a>
                           ) : (
                             <span className="text-alert font-medium">No File Uploaded</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-sm">
+                          {isQualitySane ? (
+                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Evidence url exists and is valid link">
+                              Complete
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Missing proof file link attachment">
+                              Needs Review
+                            </span>
                           )}
                         </td>
                         <td className="py-2.5 px-3 text-sm font-semibold">

@@ -549,6 +549,7 @@ export default function Environmental() {
                     <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Factor / Activity</th>
                     <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Quantity</th>
                     <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Emissions</th>
+                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Quality</th>
                     <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim">Source</th>
                   </tr>
                 </thead>
@@ -564,7 +565,7 @@ export default function Environmental() {
                     if (transactions.length === 0) {
                       return (
                         <tr>
-                          <td colSpan={6} className="py-8">
+                          <td colSpan={7} className="py-8">
                             <EmptyState
                               title="No carbon transactions logged yet"
                               description="Add carbon transactions manually or via operations."
@@ -581,7 +582,7 @@ export default function Environmental() {
                     if (filteredTxs.length === 0) {
                       return (
                         <tr>
-                          <td colSpan={6} className="py-8">
+                          <td colSpan={7} className="py-8">
                             <EmptyState title="No matching transactions found" description="Adjust your filters or search keywords." />
                           </td>
                         </tr>
@@ -592,6 +593,7 @@ export default function Environmental() {
                       .map((tx) => {
                         const dept = departments.find((d) => d.id === tx.departmentId);
                         const ef = factors.find((f) => f.id === tx.emissionFactorId);
+                        const isQualitySane = tx.quantity > 0 && tx.quantity < 10000 && ef && ef.unit;
                         return (
                           <tr key={tx.id} className="border-b hover:bg-white/5 transition-colors" style={{ borderColor: 'var(--moss-line)' }}>
                             <td className="py-2.5 px-3 text-sm font-mono-data">{tx.date}</td>
@@ -602,6 +604,17 @@ export default function Environmental() {
                             </td>
                             <td className="py-2.5 px-3 text-sm font-mono-data text-canopy font-bold">
                               {tx.calculatedEmissions.toFixed(1)} <span className="text-[10px] text-paper-dim">kg CO2e</span>
+                            </td>
+                            <td className="py-2.5 px-3 text-sm">
+                              {isQualitySane ? (
+                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
+                                  Complete
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
+                                  Needs Review
+                                </span>
+                              )}
                             </td>
                             <td className="py-2.5 px-3 text-right text-xs">
                               {tx.autoCalculated ? (
@@ -627,8 +640,8 @@ export default function Environmental() {
             {/* AI helper section */}
             <div className="mb-4 p-3 rounded bg-white/5 border border-moss-line/50 flex flex-col gap-2">
               <label className="block text-[10px] uppercase tracking-wider text-amber font-bold flex items-center justify-between">
-                <span>AI Data Wrangler Helper</span>
-                <span className="px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[8px] font-semibold font-mono">Research Archetype 01</span>
+                <span>AI Data Wrangler (Databricks + Trifacta Mode)</span>
+                <span className="px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[8px] font-semibold font-mono">Archetype 01 — Normalized Schema</span>
               </label>
               <textarea
                 placeholder="e.g. Purchased 150 liters of diesel fuel for delivery trucks..."

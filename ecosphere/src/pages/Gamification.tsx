@@ -480,6 +480,7 @@ export default function Gamification() {
                       <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Challenge</th>
                       <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Evidence proof</th>
                       <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Progress Bar</th>
+                      <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Quality</th>
                       <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Status</th>
                       <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim font-sans">Actions</th>
                     </tr>
@@ -487,7 +488,7 @@ export default function Gamification() {
                   <tbody>
                     {participations.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="py-8">
+                        <td colSpan={7} className="py-8">
                           <EmptyState
                             title="All caught up"
                             description="No challenge submissions awaiting evaluation."
@@ -499,6 +500,7 @@ export default function Gamification() {
                         const emp = employees.find((e) => e.id === part.employeeId);
                         const chal = challenges.find((c) => c.id === part.challengeId);
                         if (!chal) return null;
+                        const isQualitySane = part.proofUrl && part.proofUrl.startsWith('http') && part.progress === 100;
                         return (
                           <tr key={part.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
                             <td className="py-2.5 px-3 text-sm text-paper font-semibold">{emp ? emp.name : 'Unknown'}</td>
@@ -522,6 +524,17 @@ export default function Gamification() {
                                 </div>
                                 <span>{part.progress}%</span>
                               </div>
+                            </td>
+                            <td className="py-2.5 px-3 text-sm">
+                              {isQualitySane ? (
+                                <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Evidence proof is complete & progress is 100%">
+                                  Complete
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold animate-fade-in" title="Databricks/Trifacta Grounded Quality: Incomplete progress or missing evidence URL link">
+                                  Needs Review
+                                </span>
+                              )}
                             </td>
                             <td className="py-2.5 px-3 text-sm font-semibold">
                               <span className={`px-2 py-0.5 rounded text-[10px] ${part.approvalStatus === 'Approved' ? 'bg-canopy/15 text-canopy' : part.approvalStatus === 'Rejected' ? 'bg-alert/15 text-alert' : 'bg-amber/15 text-amber'}`}>
