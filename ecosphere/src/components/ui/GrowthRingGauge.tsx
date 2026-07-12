@@ -80,15 +80,15 @@ export default function GrowthRingGauge({
           ESG SCORE
         </text>
       </svg>
-      <div className="flex gap-4 text-xs font-body">
+      <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-[10px] font-body w-full px-2">
         {rings.map((ring) => (
-          <div key={ring.label} className="flex items-center gap-1.5">
+          <div key={ring.label} className="flex items-center gap-1 shrink-0">
             <span
-              className="inline-block w-2 h-2 rounded-full"
+              className="inline-block w-1.5 h-1.5 rounded-full"
               style={{ background: ring.color }}
             />
             <span style={{ color: 'var(--paper-dim)' }}>{ring.label}</span>
-            <span className="font-mono-data" style={{ color: 'var(--paper)' }}>
+            <span className="font-mono-data font-semibold" style={{ color: 'var(--paper)' }}>
               {ring.value.toFixed(0)}
             </span>
           </div>
