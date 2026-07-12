@@ -249,68 +249,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* left column: concentric gauge + AI widget */}
-        <div className="lg:col-span-1 flex flex-col gap-5">
-          <Card className="flex items-center justify-center">
-            <GrowthRingGauge
-              environmental={overallScore.environmental}
-              social={overallScore.social}
-              governance={overallScore.governance}
-              overall={overallScore.total}
-            />
-          </Card>
-          
-          {/* AI Executive Summary Widget */}
-          <Card title="AI Executive Summary & Projections" eyebrow="Research Archetype 02">
-            <div className="flex flex-col gap-3.5 my-1">
-              {!aiSummary ? (
-                <div className="flex flex-col gap-3">
-                  <p className="text-xs text-paper-dim leading-relaxed">
-                    Generate a natural-language report summarizing quarterly performance updates and next-period score projections.
-                  </p>
-                  <button
-                    onClick={handleGenerateAiSummary}
-                    disabled={aiLoading}
-                    className="py-2 px-3 rounded bg-moss hover:bg-white/10 text-paper font-semibold text-xs transition-colors cursor-pointer"
-                  >
-                    {aiLoading ? 'Analyzing Performance...' : 'Generate AI ESG Executive Report'}
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  <div className="p-3 rounded bg-white/5 border border-moss-line text-xs leading-relaxed text-paper relative">
-                    <span className="absolute top-2 right-2 px-1.5 py-0.2 rounded bg-amber text-ink text-[8px] font-extrabold tracking-wider">
-                      AI-GENERATED
-                    </span>
-                    <p className="pr-12">{aiSummary}</p>
-                  </div>
-                  
-                  {/* Projections deltas */}
-                  <div>
-                    <h4 className="text-[10px] uppercase tracking-wider text-paper-dim font-bold mb-2">
-                      Projected Next-Quarter score shifts
-                    </h4>
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-data">
-                      <div className="p-2.5 rounded bg-canopy/10 border border-canopy/20">
-                        <span className="text-[9px] uppercase tracking-wider text-canopy font-bold block mb-0.5">Env Shift</span>
-                        <span className="text-sm font-bold text-paper">{aiForecast?.environmental.change}</span>
-                      </div>
-                      <div className="p-2.5 rounded bg-slate/10 border border-slate/20">
-                        <span className="text-[9px] uppercase tracking-wider text-slate font-bold block mb-0.5">Soc Shift</span>
-                        <span className="text-sm font-bold text-paper">{aiForecast?.social.change}</span>
-                      </div>
-                      <div className="p-2.5 rounded bg-amber/10 border border-amber/20">
-                        <span className="text-[9px] uppercase tracking-wider text-amber font-bold block mb-0.5">Gov Shift</span>
-                        <span className="text-sm font-bold text-paper">{aiForecast?.governance.change}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => { setAiSummary(''); setAiForecast(null); }}
-                    className="py-1.5 text-center text-[10px] text-paper-dim hover:text-paper font-semibold font-sans cursor-pointer"
-                  >
       {/* TOP ROW: ESG Gauge (compact) + 6 KPI Tiles aligned in same row */}
       <div className="grid grid-cols-12 gap-4 items-stretch">
 
