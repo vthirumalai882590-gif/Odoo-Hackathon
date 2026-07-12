@@ -168,6 +168,11 @@ export default function Social() {
 
   // Enforce approval rules & award points
   const handleApproveParticipation = async (part: EmployeeParticipation) => {
+    if (config?.evidenceRequiredForCSR && !part.proofUrl) {
+      setErrorMsg('Approval blocked: Proof evidence required for CSR activities.');
+      showToast({ message: 'Approval blocked: Proof evidence required.', type: 'error' });
+      return;
+    }
     try {
       await runTransaction(db, async (transaction) => {
         const empRef = doc(db, 'employees', part.employeeId);

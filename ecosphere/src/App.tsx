@@ -10,12 +10,20 @@ import Gamification from './pages/Gamification';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 
+import LoginPage from './pages/LoginPage';
+import FinishLogin from './pages/FinishLogin';
+
 export default function App() {
   return (
     <ThemeProvider>
       <ToastProvider>
         <BrowserRouter>
           <Routes>
+            {/* Passwordless Sign-in Routes */}
+            <Route path="login" element={<LoginPage />} />
+            <Route path="finish-login" element={<FinishLogin />} />
+
+            {/* Authenticated Layout */}
             <Route element={<AppShell />}>
               <Route index element={<Dashboard />} />
               <Route path="environmental" element={<Environmental />} />

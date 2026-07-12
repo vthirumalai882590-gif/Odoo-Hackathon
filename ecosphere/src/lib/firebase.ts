@@ -22,6 +22,9 @@ import {
   createUserWithEmailAndPassword as realCreateUserWithEmailAndPassword,
   signOut as realSignOut,
   onAuthStateChanged as realOnAuthStateChanged,
+  sendSignInLinkToEmail as realSendSignInLinkToEmail,
+  isSignInWithEmailLink as realIsSignInWithEmailLink,
+  signInWithEmailLink as realSignInWithEmailLink,
 } from 'firebase/auth';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
@@ -472,6 +475,52 @@ export function onAuthStateChanged(authInstance: any, callback: (user: any) => v
     });
   }
   return mockAuth.addListener(callback);
+}
+
+export async function sendSignInLinkToEmail(authInstance: any, email: string, actionCodeSettings: any) {
+  if (isRealFirebase) return await realSendSignInLinkToEmail(authInstance, email, actionCodeSettings);
+  
+  // Local fallback simulation
+  const employees = Object.values(mockDb.getCollection('employees'));
+  const found = employees.find((emp: any) => emp.email.toLowerCase() === email.toLowerCase());
+  if (!found) {
+    throw new Error('AuthError: User email not found in seeded database. Please reset & seed first.');
+  }
+
+  // Construct fake magic link containing oobCode for verification
+  const link = `${actionCodeSettings.url}?apiKey=mock-api-key&mode=signIn&oobCode=mock-code-${found.id}`;
+  
+  // Show standard notification/prompt to simulate receipt of the email link
+  console.log(`[Firebase Link Sent to ${email}]: ${link}`);
+  
+  // Store sign-in link info in a custom localStorage key so the client can simulate opening it
+  window.localStorage.setItem('mockSignInLink', link);
+  return true;
+}
+
+export function isSignInWithEmailLink(authInstance: any, url: string) {
+  if (isRealFirebase) return realIsSignInWithEmailLink(authInstance, url);
+  return url.includes('oobCode=mock-code-');
+}
+
+export async function signInWithEmailLink(authInstance: any, email: string, url: string) {
+  if (isRealFirebase) return await realSignInWithEmailLink(authInstance, email, url);
+
+  const match = url.match(/oobCode=mock-code-([a-zA-Z0-9\-]+)/);
+  if (!match) {
+    throw new Error('AuthError: Invalid or malformed mock login code.');
+  }
+  const employeeId = match[1];
+  const employee = mockDb.getDoc('employees', employeeId);
+  if (!employee) {
+    throw new Error('AuthError: Mock employee could not be found.');
+  }
+  if (employee.email.toLowerCase() !== email.toLowerCase()) {
+    throw new Error('AuthError: Security check failed. Email mismatch.');
+  }
+
+  mockAuth.setCurrentUser(employee);
+  return { user: employee };
 }
 
 export function clearMockDatabase() {
