@@ -240,10 +240,12 @@ export default function Dashboard() {
 
       <div>
         <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-          Organization Dashboard
+          <span className="text-grad-canopy">Eco</span>Sphere
+          <span className="text-base ml-2 font-body font-normal" style={{ color: 'var(--paper-dim)' }}>— Organization Dashboard</span>
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
-          Q3 2026 · aggregated in real time across operational nodes
+        <p className="text-xs mt-1 flex items-center gap-2" style={{ color: 'var(--paper-dim)' }}>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full badge badge-green">● Live</span>
+          Q3 2026 · aggregated in real time across all operational nodes
         </p>
       </div>
 
@@ -324,37 +326,43 @@ export default function Dashboard() {
             value={formattedCarbon}
             accent="var(--canopy)"
             delta="aggregated scope"
+            icon={<span style={{ fontSize: '15px' }}>🌿</span>}
           />
           <KpiTile
             label="CSR participation"
             value={`${totalCsrRate}%`}
             accent="var(--slate)"
             delta="volunteering rate"
+            icon={<span style={{ fontSize: '15px' }}>🤝</span>}
           />
           <KpiTile
             label="Open compliance"
             value={openComplianceCount.toString()}
-            accent={openComplianceCount > 0 ? 'var(--alert)' : 'var(--paper)'}
+            accent={openComplianceCount > 0 ? 'var(--alert)' : 'var(--canopy)'}
             delta={overdueCount > 0 ? `${overdueCount} overdue` : '0 overdue'}
             deltaPositive={overdueCount === 0}
+            icon={<span style={{ fontSize: '15px' }}>⚖️</span>}
           />
           <KpiTile
             label="Active challenges"
             value={activeChallengesCount.toString()}
             accent="var(--amber)"
             delta="employee engagement"
+            icon={<span style={{ fontSize: '15px' }}>🏆</span>}
           />
           <KpiTile
             label="Badges unlocked"
             value={totalBadgesUnlocked.toString()}
-            accent="var(--amber)"
-            delta="achievements unlocked"
+            accent="var(--purple)"
+            delta="achievements earned"
+            icon={<span style={{ fontSize: '15px' }}>🎖️</span>}
           />
           <KpiTile
             label="Policy ack. rate"
             value={`${policyAckRate}%`}
-            accent="var(--paper)"
+            accent="var(--teal)"
             delta="compliance signoffs"
+            icon={<span style={{ fontSize: '15px' }}>📋</span>}
           />
         </div>
       </div>
@@ -391,22 +399,37 @@ export default function Dashboard() {
         </Card>
 
         {/* Live Leaderboard Card */}
-        <Card className="lg:col-span-1" title="Top Contributors" eyebrow="Leaderboard">
-          <div className="flex flex-col gap-3 my-2">
-            {topEmployees.map((emp) => (
-              <div key={emp.id} className="flex justify-between items-center p-2.5 rounded bg-white/5 border border-moss-line">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-mono-data text-amber text-xs w-4">#{emp.rank}</span>
-                  <div className="leading-tight">
-                    <div className="text-sm font-semibold text-paper">{emp.name}</div>
-                    <span className="text-[9px] uppercase tracking-wider text-paper-dim font-mono-data">
-                      Dept: {emp.deptCode}
-                    </span>
+        <Card className="lg:col-span-1" title="Top Contributors" eyebrow="🏅 Leaderboard">
+          <div className="flex flex-col gap-2 my-2">
+            {topEmployees.map((emp) => {
+              const medal = emp.rank === 1 ? '🥇' : emp.rank === 2 ? '🥈' : emp.rank === 3 ? '🥉' : null;
+              const rankColor = emp.rank === 1 ? 'var(--amber)' : emp.rank === 2 ? 'var(--paper-mid)' : emp.rank === 3 ? '#cd7f32' : 'var(--paper-dim)';
+              return (
+                <div
+                  key={emp.id}
+                  className="flex justify-between items-center p-2.5 rounded-lg transition-all"
+                  style={{
+                    background: emp.rank <= 3 ? `${rankColor}10` : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${emp.rank <= 3 ? rankColor + '25' : 'rgba(255,255,255,0.06)'}`,
+                  }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    {medal ? (
+                      <span className="text-base">{medal}</span>
+                    ) : (
+                      <span className="font-mono-data text-xs w-5 text-center" style={{ color: 'var(--paper-dim)' }}>#{emp.rank}</span>
+                    )}
+                    <div className="leading-tight">
+                      <div className="text-sm font-semibold" style={{ color: 'var(--paper)' }}>{emp.name}</div>
+                      <span className="text-[9px] uppercase tracking-wider font-mono-data" style={{ color: 'var(--paper-dim)' }}>
+                        {emp.deptCode}
+                      </span>
+                    </div>
                   </div>
+                  <span className="font-mono-data text-xs font-bold" style={{ color: rankColor }}>{emp.xp} XP</span>
                 </div>
-                <span className="font-mono-data text-xs text-amber font-semibold">{emp.xp} XP</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
       </div>

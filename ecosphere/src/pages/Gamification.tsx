@@ -303,10 +303,21 @@ export default function Gamification() {
       ) : (
         <>
           {/* Simulation selector for Odoo hackathon validation */}
-          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border bg-white/5 border-moss-line">
-            <div>
-              <div className="text-xs uppercase tracking-wider text-amber font-bold">Hackathon User Simulation</div>
-              <div className="text-sm text-paper mt-1">Select an active user to view gamification dashboard and test redemptions:</div>
+          <div
+            className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl border"
+            style={{
+              background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(62,207,122,0.05))',
+              borderColor: 'rgba(245,166,35,0.25)',
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--grad-amber)' }}>
+                <span className="text-white text-sm">🎮</span>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wider font-bold" style={{ color: 'var(--amber)' }}>Hackathon Demo Mode</div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--paper-dim)' }}>Select a user to simulate their gamification view</div>
+              </div>
             </div>
             <select
               value={activeEmpId}
@@ -315,7 +326,8 @@ export default function Gamification() {
                 setErrorMsg('');
                 setSuccessMsg('');
               }}
-              className="px-3 py-1.5 rounded bg-moss border border-moss-line text-paper font-semibold text-sm cursor-pointer"
+              className="px-3 py-2 rounded-lg text-sm cursor-pointer font-semibold"
+              style={{ background: 'var(--moss-mid)', border: '1px solid var(--moss-line)', color: 'var(--paper)' }}
             >
               {employees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
@@ -327,57 +339,86 @@ export default function Gamification() {
 
           {/* Hero Profile header */}
           {activeEmployee && (
-        <div className="p-6 rounded-lg border grid grid-cols-1 md:grid-cols-3 gap-6 items-center" style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)' }}>
+        <div
+          className="p-6 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-6 items-center relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(62,207,122,0.08) 0%, var(--ink-raised) 50%, rgba(91,141,238,0.06) 100%)',
+            border: '1px solid rgba(62,207,122,0.2)',
+            boxShadow: '0 0 40px rgba(62,207,122,0.06)',
+          }}
+        >
+          {/* Decorative glow */}
+          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse, rgba(245,166,35,0.12), transparent 70%)' }} />
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold bg-moss text-amber border border-moss-line">
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0"
+              style={{
+                background: 'var(--grad-canopy)',
+                color: 'white',
+                boxShadow: '0 4px 16px rgba(62,207,122,0.4)',
+              }}
+            >
               {activeEmployee.name[0]}
             </div>
             <div>
-              <h2 className="text-xl font-bold font-sans text-paper">{activeEmployee.name}</h2>
-              <p className="text-xs text-paper-dim uppercase tracking-wider mt-0.5">
+              <h2 className="text-xl font-bold" style={{ color: 'var(--paper)' }}>{activeEmployee.name}</h2>
+              <p className="text-xs uppercase tracking-wider mt-0.5" style={{ color: 'var(--canopy)' }}>
                 {departments.find((d) => d.id === activeEmployee.departmentId)?.name || 'EcoSphere Member'}
               </p>
+              <span className="mt-1 badge badge-green">{activeEmployee.role}</span>
             </div>
           </div>
 
-          {/* Animated XP Fill Bar */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between text-xs text-paper-dim font-mono-data">
-              <span>XP Level progress</span>
-              <span className="text-amber font-semibold">{activeEmployee.xp} XP</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between text-xs font-mono-data" style={{ color: 'var(--paper-dim)' }}>
+              <span>XP Progress</span>
+              <span className="font-bold" style={{ color: 'var(--amber)' }}>{activeEmployee.xp} / 1,500 XP</span>
             </div>
-            <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden border border-moss-line">
+            <div className="w-full h-3 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
               <motion.div
-                className="h-full bg-gradient-to-r from-amber to-amber-dim"
+                className="h-full rounded-full"
+                style={{ background: 'var(--grad-amber)', boxShadow: '0 0 8px rgba(245,166,35,0.5)' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.min((activeEmployee.xp / 1500) * 100, 100)}%` }}
                 transition={{ duration: 1.2, ease: 'easeOut' }}
               />
             </div>
-            <div className="text-[10px] text-right text-paper-dim font-mono-data">
+            <div className="text-[10px] text-right font-mono-data" style={{ color: 'var(--paper-dim)' }}>
               Next badge threshold: 1,500 XP
+            </div>
+            <div className="flex gap-2 mt-1">
+              <div className="flex-1 text-center p-2 rounded-lg" style={{ background: 'rgba(62,207,122,0.1)', border: '1px solid rgba(62,207,122,0.2)' }}>
+                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--canopy)' }}>XP Earned</div>
+                <div className="text-base font-bold font-mono-data" style={{ color: 'var(--canopy)' }}>{activeEmployee.xp}</div>
+              </div>
+              <div className="flex-1 text-center p-2 rounded-lg" style={{ background: 'rgba(91,141,238,0.1)', border: '1px solid rgba(91,141,238,0.2)' }}>
+                <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--slate)' }}>Badges</div>
+                <div className="text-base font-bold font-mono-data" style={{ color: 'var(--slate)' }}>
+                  {badges.filter(b => b.awardedTo === activeEmployee.id).length}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Point wallet balance */}
-          <div className="flex flex-col items-end md:border-l border-moss-line pl-6">
-            <span className="text-xs uppercase tracking-wider text-paper-dim">Redeemable Balance</span>
-            <span className="text-4xl font-extrabold font-mono-data text-amber mt-1">
+          <div className="flex flex-col items-center justify-center p-4 rounded-xl md:border-l" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+            <span className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Redeemable Balance</span>
+            <span className="text-4xl font-extrabold font-mono-data mt-1" style={{ color: 'var(--amber)' }}>
               {activeEmployee.points.toLocaleString()}
-              <span className="text-sm font-semibold text-paper-dim ml-1.5 uppercase font-sans">Points</span>
             </span>
+            <span className="text-xs font-semibold uppercase" style={{ color: 'var(--paper-dim)' }}>Points</span>
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex border-b animate-fade-in" style={{ borderColor: 'var(--moss-line)' }}>
+      <div className="flex gap-1 p-1 rounded-xl animate-fade-in" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--moss-line)' }}>
         {(
           [
-            { id: 'challenges', label: 'Challenges Board' },
-            { id: 'approvals', label: 'Approvals Queue' },
-            { id: 'rewards', label: 'Rewards Catalog' },
-            { id: 'leaderboard', label: 'Organization Leaderboard' }
+            { id: 'challenges', label: '🏆 Challenges', color: 'var(--canopy)' },
+            { id: 'approvals', label: '✅ Approvals', color: 'var(--amber)' },
+            { id: 'rewards', label: '🎁 Rewards', color: 'var(--purple)' },
+            { id: 'leaderboard', label: '📊 Leaderboard', color: 'var(--slate)' }
           ] as const
         ).map((tab) => (
           <button
@@ -387,11 +428,12 @@ export default function Gamification() {
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-canopy text-paper font-semibold'
-                : 'border-transparent text-paper-dim hover:text-paper'
-            }`}
+            className="flex-1 px-3 py-2 text-xs font-semibold rounded-lg transition-all duration-150 cursor-pointer"
+            style={{
+              background: activeTab === tab.id ? 'var(--moss-mid)' : 'transparent',
+              color: activeTab === tab.id ? tab.color : 'var(--paper-dim)',
+              boxShadow: activeTab === tab.id ? '0 1px 4px rgba(0,0,0,0.3)' : 'none',
+            }}
           >
             {tab.label}
           </button>
@@ -415,32 +457,59 @@ export default function Gamification() {
         <div className="flex flex-col gap-6 animate-fade-in">
           {/* Kanban Board */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {(['Draft', 'Active', 'Under Review', 'Completed'] as Challenge['status'][]).map((status) => {
+            {([
+              { status: 'Draft',        color: '#8a8274', grad: 'linear-gradient(135deg,#3d3a34,#2a2820)', badge: 'badge-grey',   btnBg: 'rgba(255,255,255,0.07)' },
+              { status: 'Active',       color: '#3ecf7a', grad: 'linear-gradient(135deg,rgba(62,207,122,0.12),rgba(30,100,55,0.08))', badge: 'badge-green',  btnBg: 'rgba(62,207,122,0.15)' },
+              { status: 'Under Review', color: '#f5a623', grad: 'linear-gradient(135deg,rgba(245,166,35,0.12),rgba(120,80,10,0.08))', badge: 'badge-amber',  btnBg: 'rgba(245,166,35,0.15)' },
+              { status: 'Completed',    color: '#a78bfa', grad: 'linear-gradient(135deg,rgba(167,139,250,0.12),rgba(80,50,150,0.08))', badge: 'badge-purple', btnBg: 'rgba(167,139,250,0.15)' },
+            ] as { status: Challenge['status'], color: string, grad: string, badge: string, btnBg: string }[]).map(({ status, color, grad, badge, btnBg }) => {
               const list = challenges.filter((c) => c.status === status);
               return (
-                <div key={status} className="p-3 rounded-lg bg-white/5 border border-moss-line flex flex-col gap-3 min-h-[300px]">
-                  <div className="flex justify-between items-center border-b border-moss-line pb-2 mb-1">
-                    <span className="text-xs uppercase tracking-wider text-paper font-bold">{status}</span>
-                    <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono-data text-paper-dim">{list.length}</span>
+                <div
+                  key={status}
+                  className="p-3 rounded-xl flex flex-col gap-3 min-h-[300px]"
+                  style={{
+                    background: grad,
+                    border: `1px solid ${color}28`,
+                    boxShadow: `0 0 0 1px ${color}10 inset`,
+                  }}
+                >
+                  <div className="flex justify-between items-center pb-2 mb-1" style={{ borderBottom: `1px solid ${color}30` }}>
+                    <span className="text-xs uppercase tracking-wider font-bold" style={{ color }}>{status}</span>
+                    <span
+                      className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                      style={{ background: color, color: '#080f0c' }}
+                    >{list.length}</span>
                   </div>
-                  {list.map((c) => (
-                    <div key={c.id} className="p-3 rounded bg-ink-raised border border-moss-line flex flex-col gap-2.5 shadow-sm">
-                      <div>
-                        <h4 className="text-xs font-bold text-paper font-sans">{c.title}</h4>
-                        <p className="text-[10px] text-paper-dim line-clamp-2 mt-1 leading-relaxed">{c.description}</p>
-                      </div>
-                      <div className="flex justify-between items-center text-[10px] font-mono-data pt-1.5 border-t border-moss-line/50">
-                        <span className="text-amber font-semibold">+{c.xp} XP</span>
-                        <span className="px-1.5 py-0.5 rounded bg-white/5 text-paper-dim">{c.difficulty}</span>
-                      </div>
-                      <button
-                        onClick={() => handleAdvanceChallenge(c)}
-                        className="w-full py-1 text-[10px] uppercase font-bold text-center rounded bg-moss hover:bg-white/10 text-paper-dim hover:text-paper font-sans cursor-pointer transition-colors"
+                  {list.length === 0 && (
+                    <div className="flex-1 flex items-center justify-center text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>Empty</div>
+                  )}
+                  {list.map((c) => {
+                    const diffColor = c.difficulty === 'Hard' ? 'var(--alert)' : c.difficulty === 'Medium' ? 'var(--amber)' : 'var(--canopy)';
+                    return (
+                      <div
+                        key={c.id}
+                        className="p-3 rounded-lg flex flex-col gap-2.5"
+                        style={{ background: 'rgba(0,0,0,0.25)', border: `1px solid ${color}15` }}
                       >
-                        Advance Status
-                      </button>
-                    </div>
-                  ))}
+                        <div>
+                          <h4 className="text-xs font-bold" style={{ color: 'var(--paper)' }}>{c.title}</h4>
+                          <p className="text-[10px] line-clamp-2 mt-1 leading-relaxed" style={{ color: 'var(--paper-dim)' }}>{c.description}</p>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] font-mono-data pt-1.5" style={{ borderTop: `1px solid ${color}15` }}>
+                          <span className="font-bold" style={{ color: 'var(--amber)' }}>+{c.xp} XP</span>
+                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold" style={{ color: diffColor, background: `${diffColor}18`, border: `1px solid ${diffColor}30` }}>{c.difficulty}</span>
+                        </div>
+                        <button
+                          onClick={() => handleAdvanceChallenge(c)}
+                          className="w-full py-1.5 text-[10px] uppercase font-bold text-center rounded-lg cursor-pointer transition-all hover:opacity-90"
+                          style={{ background: btnBg, color, border: `1px solid ${color}30` }}
+                        >
+                          Advance Status
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })}
