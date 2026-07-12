@@ -376,18 +376,18 @@ export default function Environmental() {
                 placeholder="Search activity types..."
                 value={factorSearch}
                 onChange={(e) => setFactorSearch(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy placeholder:opacity-40"
+                className="input-field text-xs"
               />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
-                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Activity Type</th>
-                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Scope</th>
-                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Factor Value</th>
-                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Effective Date</th>
-                    <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim font-sans">Actions</th>
+                  <tr className="border-b" style={{ borderColor: 'var(--color-surface-border)' }}>
+                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Activity Type</th>
+                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider w-28" style={{ color: 'var(--color-text-secondary)' }}>Scope</th>
+                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Factor Value</th>
+                    <th className="py-2 px-3 text-[11px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Effective Date</th>
+                    <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -533,7 +533,7 @@ export default function Environmental() {
 
               <button
                 type="submit"
-                className="w-full py-2 mt-2 rounded bg-canopy hover:bg-canopy-dim text-white text-sm font-semibold transition-colors cursor-pointer"
+                className="w-full py-2.5 mt-2 rounded-xl text-white text-sm font-semibold transition-all cursor-pointer btn-primary"
               >
                 Save Factor
               </button>
@@ -551,7 +551,7 @@ export default function Environmental() {
                 placeholder="Search ledger by department, factor, source..."
                 value={txSearch}
                 onChange={(e) => setTxSearch(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy placeholder:opacity-40"
+                className="input-field text-xs"
               />
             </div>
             <div className="overflow-x-auto">

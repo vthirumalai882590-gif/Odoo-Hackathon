@@ -356,23 +356,23 @@ export default function Dashboard() {
 
         {/* Department ESG Standings */}
         <div
-          className="col-span-12 md:col-span-5 rounded-xl border overflow-hidden"
-          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+          className="col-span-12 md:col-span-5 rounded-2xl border overflow-hidden elevation-1"
+          style={{ background: 'var(--color-surface-2)', borderColor: 'var(--color-surface-border)' }}
         >
-          <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--moss-line)' }}>
-            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--paper-dim)' }}>Comparative Audit</div>
-            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Department ESG Standings</h3>
+          <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--color-surface-border)' }}>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--color-text-tertiary)' }}>Comparative Audit</div>
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>Department ESG Standings</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--moss-line)' }}>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Dept</th>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Name</th>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--canopy)' }}>Env</th>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--slate)' }}>Soc</th>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--amber)' }}>Gov</th>
-                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-right" style={{ color: 'var(--paper-dim)' }}>Total</th>
+                <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--color-surface-border)' }}>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Dept</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>Name</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--color-environmental)' }}>Env</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--color-social)' }}>Soc</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--color-governance)' }}>Gov</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-right" style={{ color: 'var(--color-text-secondary)' }}>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -381,21 +381,20 @@ export default function Dashboard() {
                   const scoreDiffPercent = avgTotalScore > 0 ? (scoreDiff / avgTotalScore) * 100 : 0;
                   const formattedDiff = scoreDiffPercent >= 0 ? `+${scoreDiffPercent.toFixed(0)}%` : `${scoreDiffPercent.toFixed(0)}%`;
                   return (
-                    <tr key={dept.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                    <tr key={dept.id} style={{ borderBottom: '1px solid var(--color-surface-border)' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-3)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <td className="py-2.5 px-4 text-xs font-mono-data font-semibold" style={{ color: 'var(--paper-dim)' }}>{dept.code}</td>
-                      <td className="py-2.5 px-4 text-xs" style={{ color: 'var(--paper)' }}>{dept.name}</td>
-                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--canopy)' }}>{dept.env}</td>
-                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--slate)' }}>{dept.soc}</td>
-                      <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--amber)' }}>{dept.gov}</td>
-                      <td className="py-2.5 px-4 text-xs font-mono-data text-right font-bold" style={{ color: 'var(--paper)' }}>
+                      <td className="py-2.5 px-4 text-xs font-semibold" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-mono)' }}>{dept.code}</td>
+                      <td className="py-2.5 px-4 text-xs" style={{ color: 'var(--color-text-primary)' }}>{dept.name}</td>
+                      <td className="py-2.5 px-4 text-xs text-center font-semibold" style={{ color: 'var(--color-environmental)', fontFamily: 'var(--font-mono)' }}>{dept.env}</td>
+                      <td className="py-2.5 px-4 text-xs text-center font-semibold" style={{ color: 'var(--color-social)', fontFamily: 'var(--font-mono)' }}>{dept.soc}</td>
+                      <td className="py-2.5 px-4 text-xs text-center font-semibold" style={{ color: 'var(--color-governance)', fontFamily: 'var(--font-mono)' }}>{dept.gov}</td>
+                      <td className="py-2.5 px-4 text-xs text-right font-bold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>
                         <div>{dept.total}</div>
                         <div
-                          className={`text-[9px] font-sans font-normal mt-0.5 ${
-                            scoreDiff >= 0 ? 'text-canopy' : 'text-alert'
-                          }`}
+                          className="text-[9px] font-normal mt-0.5"
+                          style={{ color: scoreDiff >= 0 ? 'var(--color-brand-400)' : 'var(--color-diff-hard)' }}
                           title="Preqin/FactSet Comparative Benchmark vs. Org Average"
                         >
                           {formattedDiff} vs avg
@@ -411,29 +410,29 @@ export default function Dashboard() {
 
         {/* Top Contributors Leaderboard */}
         <div
-          className="col-span-12 md:col-span-3 rounded-xl border p-5 flex flex-col gap-3"
-          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+          className="col-span-12 md:col-span-3 rounded-2xl border p-5 flex flex-col gap-3 elevation-1"
+          style={{ background: 'var(--color-surface-2)', borderColor: 'var(--color-surface-border)' }}
         >
           <div>
-            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--paper-dim)' }}>🏅 Leaderboard</div>
-            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Top Contributors</h3>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--color-text-tertiary)' }}>🏅 Leaderboard</div>
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>Top Contributors</h3>
           </div>
           <div className="flex flex-col gap-2">
             {topEmployees.map((emp) => {
               const medal = emp.rank === 1 ? '🥇' : emp.rank === 2 ? '🥈' : emp.rank === 3 ? '🥉' : null;
-              const rankColor = emp.rank === 1 ? 'var(--amber)' : emp.rank === 2 ? 'var(--paper-mid)' : emp.rank === 3 ? '#cd7f32' : 'var(--paper-dim)';
+              const rankColor = emp.rank === 1 ? 'var(--color-xp-gold)' : emp.rank === 2 ? 'var(--color-text-secondary)' : emp.rank === 3 ? '#cd7f32' : 'var(--color-text-tertiary)';
               return (
-                <div key={emp.id} className="flex justify-between items-center p-2.5 rounded-lg"
-                  style={{ background: emp.rank <= 3 ? `${rankColor}10` : 'rgba(255,255,255,0.03)', border: `1px solid ${emp.rank <= 3 ? rankColor + '25' : 'rgba(255,255,255,0.06)'}` }}
+                <div key={emp.id} className="flex justify-between items-center p-2.5 rounded-xl"
+                  style={{ background: emp.rank <= 3 ? `color-mix(in srgb, ${rankColor} 8%, var(--color-surface-3))` : 'var(--color-surface-3)', border: `1px solid ${emp.rank <= 3 ? rankColor + '30' : 'var(--color-surface-border)'}` }}
                 >
                   <div className="flex items-center gap-2">
-                    {medal ? <span className="text-sm">{medal}</span> : <span className="font-mono-data text-[10px] w-4 text-center" style={{ color: 'var(--paper-dim)' }}>#{emp.rank}</span>}
+                    {medal ? <span className="text-sm">{medal}</span> : <span className="text-[10px] w-4 text-center font-semibold" style={{ color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>#{emp.rank}</span>}
                     <div>
-                      <div className="text-xs font-semibold" style={{ color: 'var(--paper)' }}>{emp.name}</div>
-                      <div className="text-[9px] uppercase font-mono-data" style={{ color: 'var(--paper-dim)' }}>{emp.deptCode}</div>
+                      <div className="text-xs font-semibold" style={{ color: 'var(--color-text-primary)' }}>{emp.name}</div>
+                      <div className="text-[9px] uppercase" style={{ color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>{emp.deptCode}</div>
                     </div>
                   </div>
-                  <span className="font-mono-data text-xs font-bold" style={{ color: rankColor }}>{emp.xp} XP</span>
+                  <span className="text-xs font-bold" style={{ color: rankColor, fontFamily: 'var(--font-mono)' }}>{emp.xp} XP</span>
                 </div>
               );
             })}

@@ -337,11 +337,11 @@ h1,h2,h3,h4,.font-display {
 .progress-fill-purple { background: var(--grad-purple); }
 
 /* ─── Kanban Column Headers ──────────────────────────────── */
-.kanban-col-draft    { border-top: 3px solid var(--paper-dim); }
-.kanban-col-active   { border-top: 3px solid var(--canopy); }
-.kanban-col-review   { border-top: 3px solid var(--amber); }
-.kanban-col-completed{ border-top: 3px solid var(--purple); }
-.kanban-col-archived { border-top: 3px solid var(--slate); }
+.kanban-col-draft    { border-top: 3px solid var(--color-status-draft); }
+.kanban-col-active   { border-top: 3px solid var(--color-status-active); }
+.kanban-col-review   { border-top: 3px solid var(--color-status-review); }
+.kanban-col-completed{ border-top: 3px solid var(--color-status-complete); }
+.kanban-col-archived { border-top: 3px solid var(--color-social); }
 
 /* ─── Skeleton shimmer ───────────────────────────────────── */
 @keyframes shimmer {
