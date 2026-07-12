@@ -311,119 +311,166 @@ export default function Dashboard() {
                     onClick={() => { setAiSummary(''); setAiForecast(null); }}
                     className="py-1.5 text-center text-[10px] text-paper-dim hover:text-paper font-semibold font-sans cursor-pointer"
                   >
-                    Clear Summary Report
-                  </button>
-                </div>
-              )}
-            </div>
-          </Card>
+      {/* TOP ROW: ESG Gauge (compact) + 6 KPI Tiles aligned in same row */}
+      <div className="grid grid-cols-12 gap-4 items-stretch">
+
+        {/* ESG Ring Gauge — compact 3-col */}
+        <div
+          className="col-span-12 md:col-span-3 rounded-xl border p-4 flex flex-col items-center justify-center"
+          style={{
+            background: 'var(--ink-raised)',
+            borderColor: 'var(--moss-line)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)',
+            minHeight: '200px',
+          }}
+        >
+          <GrowthRingGauge
+            environmental={overallScore.environmental}
+            social={overallScore.social}
+            governance={overallScore.governance}
+            overall={overallScore.total}
+            size={160}
+          />
         </div>
 
-        {/* Live Aggregation KPI Tiles */}
-        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4">
-          <KpiTile
-            label="Carbon this month"
-            value={formattedCarbon}
-            accent="var(--canopy)"
-            delta="aggregated scope"
-            icon={<span style={{ fontSize: '15px' }}>🌿</span>}
-          />
-          <KpiTile
-            label="CSR participation"
-            value={`${totalCsrRate}%`}
-            accent="var(--slate)"
-            delta="volunteering rate"
-            icon={<span style={{ fontSize: '15px' }}>🤝</span>}
-          />
+        {/* 6 KPI Tiles — 9-col, 3×2 grid */}
+        <div className="col-span-12 md:col-span-9 grid grid-cols-3 gap-3">
+          <KpiTile label="Carbon this month" value={formattedCarbon} accent="var(--canopy)" delta="aggregated scope" icon={<span style={{ fontSize: '14px' }}>🌿</span>} />
+          <KpiTile label="CSR participation" value={`${totalCsrRate}%`} accent="var(--slate)" delta="volunteering rate" icon={<span style={{ fontSize: '14px' }}>🤝</span>} />
           <KpiTile
             label="Open compliance"
             value={openComplianceCount.toString()}
             accent={openComplianceCount > 0 ? 'var(--alert)' : 'var(--canopy)'}
             delta={overdueCount > 0 ? `${overdueCount} overdue` : '0 overdue'}
             deltaPositive={overdueCount === 0}
-            icon={<span style={{ fontSize: '15px' }}>⚖️</span>}
+            icon={<span style={{ fontSize: '14px' }}>⚖️</span>}
           />
-          <KpiTile
-            label="Active challenges"
-            value={activeChallengesCount.toString()}
-            accent="var(--amber)"
-            delta="employee engagement"
-            icon={<span style={{ fontSize: '15px' }}>🏆</span>}
-          />
-          <KpiTile
-            label="Badges unlocked"
-            value={totalBadgesUnlocked.toString()}
-            accent="var(--purple)"
-            delta="achievements earned"
-            icon={<span style={{ fontSize: '15px' }}>🎖️</span>}
-          />
-          <KpiTile
-            label="Policy ack. rate"
-            value={`${policyAckRate}%`}
-            accent="var(--teal)"
-            delta="compliance signoffs"
-            icon={<span style={{ fontSize: '15px' }}>📋</span>}
-          />
+          <KpiTile label="Active challenges" value={activeChallengesCount.toString()} accent="var(--amber)" delta="employee engagement" icon={<span style={{ fontSize: '14px' }}>🏆</span>} />
+          <KpiTile label="Badges unlocked" value={totalBadgesUnlocked.toString()} accent="var(--purple)" delta="achievements earned" icon={<span style={{ fontSize: '14px' }}>🎖️</span>} />
+          <KpiTile label="Policy ack. rate" value={`${policyAckRate}%`} accent="var(--teal)" delta="compliance signoffs" icon={<span style={{ fontSize: '14px' }}>📋</span>} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Department Leaderboard Ranking table */}
-        <Card className="lg:col-span-2" title="Department ESG Standings" eyebrow="Comparative Audit">
-          <div className="overflow-x-auto my-2">
+      {/* BOTTOM ROW: AI Summary | Department Table | Leaderboard */}
+      <div className="grid grid-cols-12 gap-4">
+
+        {/* AI Executive Summary */}
+        <div
+          className="col-span-12 md:col-span-4 rounded-xl border p-5 flex flex-col gap-3"
+          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+        >
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--purple)' }}>AI Archetype</div>
+            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Executive Summary & Projections</h3>
+          </div>
+          {!aiSummary ? (
+            <div className="flex flex-col gap-3 flex-1 justify-between">
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--paper-dim)' }}>
+                Generate a natural-language report summarizing quarterly ESG performance and next-period score projections.
+              </p>
+              <button
+                onClick={handleGenerateAiSummary}
+                disabled={aiLoading}
+                className="btn-primary text-xs justify-center"
+                style={{ fontSize: '12px', padding: '8px 14px' }}
+              >
+                {aiLoading ? '⏳ Analyzing...' : '✨ Generate AI ESG Report'}
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div
+                className="p-3 rounded-lg text-xs leading-relaxed relative"
+                style={{ background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)', color: 'var(--paper)' }}
+              >
+                <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-extrabold" style={{ background: 'var(--purple)', color: 'white' }}>AI</span>
+                <p className="pr-8">{aiSummary}</p>
+              </div>
+              {aiForecast && (
+                <div className="grid grid-cols-3 gap-1.5 text-center text-xs font-mono-data">
+                  <div className="p-2 rounded-lg" style={{ background: 'rgba(62,207,122,0.1)', border: '1px solid rgba(62,207,122,0.2)' }}>
+                    <span className="text-[9px] uppercase block mb-0.5" style={{ color: 'var(--canopy)' }}>Env</span>
+                    <span className="font-bold" style={{ color: 'var(--paper)' }}>{aiForecast?.environmental?.change}</span>
+                  </div>
+                  <div className="p-2 rounded-lg" style={{ background: 'rgba(91,141,238,0.1)', border: '1px solid rgba(91,141,238,0.2)' }}>
+                    <span className="text-[9px] uppercase block mb-0.5" style={{ color: 'var(--slate)' }}>Soc</span>
+                    <span className="font-bold" style={{ color: 'var(--paper)' }}>{aiForecast?.social?.change}</span>
+                  </div>
+                  <div className="p-2 rounded-lg" style={{ background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.2)' }}>
+                    <span className="text-[9px] uppercase block mb-0.5" style={{ color: 'var(--amber)' }}>Gov</span>
+                    <span className="font-bold" style={{ color: 'var(--paper)' }}>{aiForecast?.governance?.change}</span>
+                  </div>
+                </div>
+              )}
+              <button onClick={() => { setAiSummary(''); setAiForecast(null); }} className="text-xs cursor-pointer" style={{ color: 'var(--paper-dim)' }}>
+                Clear report
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Department ESG Standings */}
+        <div
+          className="col-span-12 md:col-span-5 rounded-xl border overflow-hidden"
+          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+        >
+          <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--moss-line)' }}>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--paper-dim)' }}>Comparative Audit</div>
+            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Department ESG Standings</h3>
+          </div>
+          <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Code</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Department</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim text-center">Env</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim text-center">Soc</th>
-                  <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim text-center">Gov</th>
-                  <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim">Total ESG</th>
+                <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--moss-line)' }}>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Dept</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider" style={{ color: 'var(--paper-dim)' }}>Name</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--canopy)' }}>Env</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--slate)' }}>Soc</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-center" style={{ color: 'var(--amber)' }}>Gov</th>
+                  <th className="py-2.5 px-4 text-[10px] uppercase tracking-wider text-right" style={{ color: 'var(--paper-dim)' }}>Total</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedDepartments.map((dept) => (
-                  <tr key={dept.id} className="border-b hover:bg-white/5" style={{ borderColor: 'var(--moss-line)' }}>
-                    <td className="py-2.5 px-3 text-sm font-mono-data text-paper">{dept.code}</td>
-                    <td className="py-2.5 px-3 text-sm text-paper">{dept.name}</td>
-                    <td className="py-2.5 px-3 text-sm font-mono-data text-center text-canopy">{dept.env}</td>
-                    <td className="py-2.5 px-3 text-sm font-mono-data text-center text-slate">{dept.soc}</td>
-                    <td className="py-2.5 px-3 text-sm font-mono-data text-center text-amber">{dept.gov}</td>
-                    <td className="py-2.5 px-3 text-sm font-mono-data text-right text-paper font-bold">{dept.total}</td>
+                  <tr key={dept.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <td className="py-2.5 px-4 text-xs font-mono-data font-semibold" style={{ color: 'var(--paper-dim)' }}>{dept.code}</td>
+                    <td className="py-2.5 px-4 text-xs" style={{ color: 'var(--paper)' }}>{dept.name}</td>
+                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--canopy)' }}>{dept.env}</td>
+                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--slate)' }}>{dept.soc}</td>
+                    <td className="py-2.5 px-4 text-xs font-mono-data text-center font-semibold" style={{ color: 'var(--amber)' }}>{dept.gov}</td>
+                    <td className="py-2.5 px-4 text-xs font-mono-data text-right font-bold" style={{ color: 'var(--paper)' }}>{dept.total}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
 
-        {/* Live Leaderboard Card */}
-        <Card className="lg:col-span-1" title="Top Contributors" eyebrow="🏅 Leaderboard">
-          <div className="flex flex-col gap-2 my-2">
+        {/* Top Contributors Leaderboard */}
+        <div
+          className="col-span-12 md:col-span-3 rounded-xl border p-5 flex flex-col gap-3"
+          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+        >
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--paper-dim)' }}>🏅 Leaderboard</div>
+            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Top Contributors</h3>
+          </div>
+          <div className="flex flex-col gap-2">
             {topEmployees.map((emp) => {
               const medal = emp.rank === 1 ? '🥇' : emp.rank === 2 ? '🥈' : emp.rank === 3 ? '🥉' : null;
               const rankColor = emp.rank === 1 ? 'var(--amber)' : emp.rank === 2 ? 'var(--paper-mid)' : emp.rank === 3 ? '#cd7f32' : 'var(--paper-dim)';
               return (
-                <div
-                  key={emp.id}
-                  className="flex justify-between items-center p-2.5 rounded-lg transition-all"
-                  style={{
-                    background: emp.rank <= 3 ? `${rankColor}10` : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${emp.rank <= 3 ? rankColor + '25' : 'rgba(255,255,255,0.06)'}`,
-                  }}
+                <div key={emp.id} className="flex justify-between items-center p-2.5 rounded-lg"
+                  style={{ background: emp.rank <= 3 ? `${rankColor}10` : 'rgba(255,255,255,0.03)', border: `1px solid ${emp.rank <= 3 ? rankColor + '25' : 'rgba(255,255,255,0.06)'}` }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    {medal ? (
-                      <span className="text-base">{medal}</span>
-                    ) : (
-                      <span className="font-mono-data text-xs w-5 text-center" style={{ color: 'var(--paper-dim)' }}>#{emp.rank}</span>
-                    )}
-                    <div className="leading-tight">
-                      <div className="text-sm font-semibold" style={{ color: 'var(--paper)' }}>{emp.name}</div>
-                      <span className="text-[9px] uppercase tracking-wider font-mono-data" style={{ color: 'var(--paper-dim)' }}>
-                        {emp.deptCode}
-                      </span>
+                  <div className="flex items-center gap-2">
+                    {medal ? <span className="text-sm">{medal}</span> : <span className="font-mono-data text-[10px] w-4 text-center" style={{ color: 'var(--paper-dim)' }}>#{emp.rank}</span>}
+                    <div>
+                      <div className="text-xs font-semibold" style={{ color: 'var(--paper)' }}>{emp.name}</div>
+                      <div className="text-[9px] uppercase font-mono-data" style={{ color: 'var(--paper-dim)' }}>{emp.deptCode}</div>
                     </div>
                   </div>
                   <span className="font-mono-data text-xs font-bold" style={{ color: rankColor }}>{emp.xp} XP</span>
@@ -431,7 +478,7 @@ export default function Dashboard() {
               );
             })}
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );
