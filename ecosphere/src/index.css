@@ -1,5 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-display: 'Fraunces', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
 
 :root {
   /* Core backgrounds */
@@ -62,54 +67,58 @@
   --grad-teal:    linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%);
   --grad-alert:   linear-gradient(135deg, #f87171 0%, #b91c1c 100%);
   --grad-glass:   linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+
+  --theme-color-scheme: dark;
 }
 
 /* ─── Light Theme ─────────────────────────────────────────── */
 [data-theme="light"] {
   /* Backgrounds */
-  --ink:         #f0f7f3;
-  --ink-raised:  #ffffff;
-  --ink-elevated:#e8f2ec;
+  --ink:         #F1EFE3;
+  --ink-raised:  #FBFAF4;
+  --ink-elevated:#E4E8DD;
 
-  /* Surface greens */
-  --moss:        #e2f0e8;
-  --moss-mid:    #d4e8dc;
-  --moss-line:   #c2d9cb;
+  /* Surface greens/warm shades */
+  --moss:        #E4E8DD;
+  --moss-mid:    #DCDFCF;
+  --moss-line:   #D8D4C2;
 
   /* Text */
-  --paper:       #0d1f15;
-  --paper-mid:   #2a4030;
-  --paper-dim:   #5a7a66;
+  --paper:       #1B2620;
+  --paper-mid:   #5A7A66;
+  --paper-dim:   #6B6A5C;
 
   /* Keep vivid accents — slightly richer for light bg */
-  --canopy:      #16a34a;
-  --canopy-dim:  #15803d;
-  --canopy-glow: rgba(22,163,74,0.18);
+  --canopy:      #2F7A50;
+  --canopy-dim:  #1A5E35;
+  --canopy-glow: rgba(47, 122, 80, 0.12);
 
-  --amber:       #d97706;
-  --amber-dim:   #b45309;
-  --amber-glow:  rgba(217,119,6,0.18);
+  --amber:       #B87418;
+  --amber-dim:   #8C540B;
+  --amber-glow:  rgba(184, 116, 24, 0.12);
 
-  --slate:       #2563eb;
-  --slate-dim:   #1d4ed8;
-  --slate-glow:  rgba(37,99,235,0.18);
+  --slate:       #4A5D82;
+  --slate-dim:   #344460;
+  --slate-glow:  rgba(74, 93, 130, 0.12);
 
-  --purple:      #7c3aed;
-  --purple-dim:  #6d28d9;
-  --purple-glow: rgba(124,58,237,0.18);
+  /* purple represents gamification accent in light mode to match amber token mapping */
+  --purple:      #B87418;
+  --purple-dim:  #8C540B;
+  --purple-glow: rgba(184, 116, 24, 0.12);
 
   --teal:        #0891b2;
-  --teal-glow:   rgba(8,145,178,0.18);
+  --teal-glow:   rgba(8, 145, 178, 0.12);
 
   --rose:        #e11d48;
-  --rose-glow:   rgba(225,29,72,0.18);
+  --rose-glow:   rgba(225, 29, 72, 0.12);
 
-  --alert:       #dc2626;
-  --alert-dim:   #b91c1c;
-  --alert-glow:  rgba(220,38,38,0.18);
+  --alert:       #B23A24;
+  --alert-dim:   #8C2513;
+  --alert-glow:  rgba(178, 58, 36, 0.12);
 
   /* Gradients stay the same */
-  --grad-glass: linear-gradient(145deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.01) 100%);
+  --grad-glass: linear-gradient(145deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.005) 100%);
+  --theme-color-scheme: light;
 }
 
 /* ─── Reset ─────────────────────────────────────────────── */
@@ -120,11 +129,28 @@ body {
   margin: 0;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   transition: background 0.25s ease, color 0.25s ease;
 }
 
+/* ─── Table ledger styling ────────────────────────────────── */
+table {
+  border-collapse: collapse;
+}
+tr {
+  transition: background-color 0.15s ease;
+}
+tbody tr:nth-child(even) {
+  background-color: color-mix(in srgb, var(--moss) 20%, transparent);
+}
+tbody tr:hover {
+  background-color: color-mix(in srgb, var(--moss) 45%, transparent) !important;
+}
+
+input[type="date"], select {
+  color-scheme: var(--theme-color-scheme);
+}
 
 h1,h2,h3,h4,.font-display {
   font-family: var(--font-display);

@@ -408,7 +408,11 @@ export default function Environmental() {
                     return filteredFactors.map((ef) => (
                       <tr key={ef.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
                         <td className="py-2.5 px-3 text-sm font-medium text-paper">{ef.activityType}</td>
-                        <td className="py-2.5 px-3 text-sm font-mono-data">Scope {ef.scope}</td>
+                        <td className="py-2.5 px-3 text-sm">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-canopy/10 text-canopy border border-canopy/20">
+                            Scope {ef.scope}
+                          </span>
+                        </td>
                         <td className="py-2.5 px-3 text-sm font-mono-data text-canopy">
                           <div className="flex items-center gap-1.5">
                             <InlineEditCell
@@ -454,7 +458,7 @@ export default function Environmental() {
                   placeholder="e.g. Grid Electricity"
                   value={factorForm.activityType}
                   onChange={(e) => setFactorForm({ ...factorForm, activityType: e.target.value })}
-                  className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy placeholder:opacity-50"
+                  className="input-field"
                 />
               </div>
 
@@ -465,7 +469,7 @@ export default function Environmental() {
                 <select
                   value={factorForm.scope}
                   onChange={(e) => setFactorForm({ ...factorForm, scope: parseInt(e.target.value) as 1|2|3 })}
-                  className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy"
+                  className="input-field cursor-pointer"
                 >
                   <option value="1" style={{ background: 'var(--ink)' }}>Scope 1 — Direct</option>
                   <option value="2" style={{ background: 'var(--ink)' }}>Scope 2 — Indirect (Purchased Power)</option>
@@ -484,7 +488,7 @@ export default function Environmental() {
                     placeholder="e.g. 0.85"
                     value={factorForm.factorValue || ''}
                     onChange={(e) => setFactorForm({ ...factorForm, factorValue: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy font-mono-data"
+                    className="input-field font-mono-data"
                   />
                 </div>
                 <div>
@@ -496,7 +500,7 @@ export default function Environmental() {
                     placeholder="e.g. kWh, liter"
                     value={factorForm.unit}
                     onChange={(e) => setFactorForm({ ...factorForm, unit: e.target.value })}
-                    className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy placeholder:opacity-50"
+                    className="input-field"
                   />
                 </div>
               </div>
@@ -509,7 +513,7 @@ export default function Environmental() {
                   type="date"
                   value={factorForm.effectiveDate}
                   onChange={(e) => setFactorForm({ ...factorForm, effectiveDate: e.target.value })}
-                  className="w-full px-3 py-2 text-sm rounded bg-white/5 border border-moss-line text-paper focus:outline-none focus:border-canopy font-mono-data"
+                  className="input-field font-mono-data"
                 />
               </div>
 

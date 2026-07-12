@@ -97,7 +97,7 @@ export default function Sidebar() {
       className="w-60 shrink-0 h-full flex flex-col border-r transition-all duration-300"
       style={{
         background: isLight
-          ? 'linear-gradient(180deg, #ffffff 0%, #f3faf5 100%)'
+          ? 'var(--ink-raised)'
           : 'linear-gradient(180deg, #0e1812 0%, #090e0c 100%)',
         borderColor: 'var(--moss-line)',
       }}
@@ -152,11 +152,11 @@ export default function Sidebar() {
                       paddingLeft: '10px',
                       paddingRight: '10px',
                       background: isActive
-                        ? `linear-gradient(90deg, ${glow}, transparent 80%)`
+                        ? (isLight ? 'var(--moss)' : `linear-gradient(90deg, ${glow}, transparent 80%)`)
                         : 'transparent',
                       color: isActive ? accent : 'var(--paper-dim)',
                       borderLeft: isActive ? `2px solid ${accent}` : '2px solid transparent',
-                      boxShadow: isActive ? `0 0 12px ${glow}` : 'none',
+                      boxShadow: (isActive && !isLight) ? `0 0 12px ${glow}` : 'none',
                     })}
                   >
                     <item.icon size={15} style={{ color: 'inherit', opacity: 1 }} strokeWidth={1.8} />
