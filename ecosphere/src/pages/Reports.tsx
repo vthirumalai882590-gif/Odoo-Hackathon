@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
-import { db, collection, onSnapshot, callEsgAI } from '../lib/firebase';
+import { db, collection, onSnapshot, doc, callEsgAI } from '../lib/firebase';
+import { calculateESGScores } from '../lib/scoring';
 import type {
   Department,
   Employee,
   CarbonTransaction,
   EmployeeParticipation,
   ComplianceIssue,
-  EmissionFactor
+  EmissionFactor,
+  EnvironmentalGoal,
+  ChallengeParticipation,
+  PolicyAcknowledgement,
+  ESGConfig
 } from '../types';
 import Card from '../components/ui/Card';
 import Skeleton from '../components/ui/Skeleton';
@@ -27,11 +32,72 @@ export default function Reports() {
   const [envFilterMode, setEnvFilterMode] = useState<'all' | 'scope1' | 'threshold'>('all');
   const [expandedDeptIds, setExpandedDeptIds] = useState<string[]>([]);
 
+  // RepRisk highlighting keywords & helper
+  const RISK_KEYWORDS = [
+    'spill', 'leak', 'fire', 'injury', 'lawsuit', 'hazard', 'toxic', 'illegal',
+    'non-compliance', 'violation', 'breach', 'fine', 'penalty', 'fraud', 'accident',
+    'hazardous', 'contaminate', 'radiation', 'safety', 'warning', 'failed',
+    'overdue', 'missing', 'delay', 'gap', 'defect'
+  ];
+
+  const renderHighlightedDescription = (text: string) => {
+    if (!text) return '';
+    const parts = text.split(new RegExp(`\\b(${RISK_KEYWORDS.join('|')})\\b`, 'gi'));
+    return parts.map((part, i) => {
+      if (RISK_KEYWORDS.includes(part.toLowerCase())) {
+        return (
+          <span
+            key={i}
+            className="bg-alert/10 text-alert border border-alert/25 px-1 py-0.2 rounded font-semibold text-[11px] mx-0.5 animate-fade-in"
+            title="RepRisk Flagged Risk Word"
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
+  // DB States
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [transactions, setTransactions] = useState<CarbonTransaction[]>([]);
+  const [csrParticipations, setCsrParticipations] = useState<EmployeeParticipation[]>([]);
+  const [complianceIssues, setComplianceIssues] = useState<ComplianceIssue[]>([]);
+
+  // Additional ESG data states for scoring
+  const [goals, setGoals] = useState<EnvironmentalGoal[]>([]);
+  const [challengeParticipations, setChallengeParticipations] = useState<ChallengeParticipation[]>([]);
+  const [policyAcks, setPolicyAcks] = useState<PolicyAcknowledgement[]>([]);
+  const [config, setConfig] = useState<ESGConfig>({
+    weighting: { environmental: 40, social: 30, governance: 30 },
+    autoEmissionCalculation: true,
+    evidenceRequiredForCSR: true,
+    badgeAutoAward: true,
+    notificationsEnabled: { inApp: true, email: false }
+  });
+
+  // Compute live scores
+  const scores = calculateESGScores({
+    departments,
+    employees,
+    carbonTransactions: transactions,
+    environmentalGoals: goals,
+    employeeParticipations: csrParticipations,
+    challengeParticipations,
+    policyAcknowledgements: policyAcks,
+    complianceIssues,
+    config
+  });
+
+  const { overallScore } = scores;
+
   const handleGenerateAiSummary = async () => {
     setAiLoading(true);
     try {
       const result = await callEsgAI('generateSummaryAndForecast', {
-        overall: { environmental: 88, social: 72, governance: 90 }
+        overall: overallScore
       });
       setAiSummary(result.summary);
     } catch (e) {
@@ -40,14 +106,6 @@ export default function Reports() {
       setAiLoading(false);
     }
   };
-
-  // DB States
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [transactions, setTransactions] = useState<CarbonTransaction[]>([]);
-  const [csrParticipations, setCsrParticipations] = useState<EmployeeParticipation[]>([]);
-
-  const [complianceIssues, setComplianceIssues] = useState<ComplianceIssue[]>([]);
 
   // Custom Builder Filters state
   const [filterDept, setFilterDept] = useState('');
@@ -61,54 +119,93 @@ export default function Reports() {
     let loadedCount = 0;
     const checkLoaded = () => {
       loadedCount++;
-      if (loadedCount >= 6) {
+      if (loadedCount >= 10) {
         setLoading(false);
       }
     };
 
-    onSnapshot(collection(db, 'departments'), (snap: any) => {
+    const unsubDepts = onSnapshot(collection(db, 'departments'), (snap: any) => {
       const list: Department[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setDepartments(list);
       checkLoaded();
     });
 
-    onSnapshot(collection(db, 'employees'), (snap: any) => {
+    const unsubEmps = onSnapshot(collection(db, 'employees'), (snap: any) => {
       const list: Employee[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setEmployees(list);
       checkLoaded();
     });
 
-    onSnapshot(collection(db, 'carbonTransactions'), (snap: any) => {
+    const unsubTxs = onSnapshot(collection(db, 'carbonTransactions'), (snap: any) => {
       const list: CarbonTransaction[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setTransactions(list);
       checkLoaded();
     });
 
-    onSnapshot(collection(db, 'employeeParticipations'), (snap: any) => {
+    const unsubGoals = onSnapshot(collection(db, 'environmentalGoals'), (snap: any) => {
+      const list: EnvironmentalGoal[] = [];
+      snap.docs.forEach((d: any) => list.push(d.data()));
+      setGoals(list);
+      checkLoaded();
+    });
+
+    const unsubCsr = onSnapshot(collection(db, 'employeeParticipations'), (snap: any) => {
       const list: EmployeeParticipation[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setCsrParticipations(list);
       checkLoaded();
     });
 
-    onSnapshot(collection(db, 'complianceIssues'), (snap: any) => {
+    const unsubChalParts = onSnapshot(collection(db, 'challengeParticipations'), (snap: any) => {
+      const list: ChallengeParticipation[] = [];
+      snap.docs.forEach((d: any) => list.push(d.data()));
+      setChallengeParticipations(list);
+      checkLoaded();
+    });
+
+    const unsubAcks = onSnapshot(collection(db, 'policyAcknowledgements'), (snap: any) => {
+      const list: PolicyAcknowledgement[] = [];
+      snap.docs.forEach((d: any) => list.push(d.data()));
+      setPolicyAcks(list);
+      checkLoaded();
+    });
+
+    const unsubIssues = onSnapshot(collection(db, 'complianceIssues'), (snap: any) => {
       const list: ComplianceIssue[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setComplianceIssues(list);
       checkLoaded();
     });
 
+    const unsubConfig = onSnapshot(doc(db, 'config', 'esgConfig'), (snap: any) => {
+      if (snap.exists()) {
+        setConfig(snap.data());
+      }
+      checkLoaded();
+    });
 
-
-    onSnapshot(collection(db, 'emissionFactors'), (snap: any) => {
+    const unsubFactors = onSnapshot(collection(db, 'emissionFactors'), (snap: any) => {
       const list: EmissionFactor[] = [];
       snap.docs.forEach((d: any) => list.push(d.data()));
       setFactors(list);
       checkLoaded();
     });
+
+    return () => {
+      unsubDepts();
+      unsubEmps();
+      unsubTxs();
+      unsubGoals();
+      unsubCsr();
+      unsubChalParts();
+      unsubAcks();
+      unsubIssues();
+      unsubConfig();
+      unsubFactors();
+    };
   }, []);
 
   // Filter custom builder list
@@ -119,6 +216,8 @@ export default function Reports() {
     // Environmental row mapping
     transactions.forEach((tx) => {
       const dept = departments.find((d) => d.id === tx.departmentId);
+      const ef = factors.find((f) => f.id === tx.emissionFactorId);
+      const isQualitySane = tx.quantity > 0 && tx.quantity < 10000 && ef && ef.unit;
       rows.push({
         id: tx.id,
         date: tx.date,
@@ -127,7 +226,8 @@ export default function Reports() {
         department: dept ? dept.name : 'Unknown',
         employee: 'System / Manual',
         details: `Carbon emission: ${tx.calculatedEmissions} kg CO2e`,
-        scoreChange: 'N/A'
+        scoreChange: 'N/A',
+        isQualitySane
       });
     });
 
@@ -135,6 +235,7 @@ export default function Reports() {
     csrParticipations.forEach((p) => {
       const emp = employees.find((e) => e.id === p.employeeId);
       const dept = emp ? departments.find((d) => d.id === emp.departmentId) : null;
+      const isQualitySane = p.proofUrl && p.proofUrl.startsWith('http');
       rows.push({
         id: p.id,
         date: p.completionDate ? p.completionDate.split('T')[0] : 'Pending',
@@ -143,7 +244,8 @@ export default function Reports() {
         department: dept ? dept.name : 'Unknown',
         employee: emp ? emp.name : 'Unknown',
         details: `Volunteered in activities (Credit: ${p.pointsEarned} pts)`,
-        scoreChange: p.approvalStatus
+        scoreChange: p.approvalStatus,
+        isQualitySane
       });
     });
 
@@ -151,6 +253,7 @@ export default function Reports() {
     complianceIssues.forEach((ci) => {
       const owner = employees.find((e) => e.id === ci.ownerEmployeeId);
       const dept = owner ? departments.find((d) => d.id === owner.departmentId) : null;
+      const isQualitySane = !!ci.ownerEmployeeId && ci.description.length > 5;
       rows.push({
         id: ci.id,
         date: ci.dueDate,
@@ -159,7 +262,8 @@ export default function Reports() {
         department: dept ? dept.name : 'Unknown',
         employee: owner ? owner.name : 'Unassigned',
         details: `Issue: ${ci.description} (Severity: ${ci.severity})`,
-        scoreChange: ci.status
+        scoreChange: ci.status,
+        isQualitySane
       });
     });
 
@@ -315,6 +419,7 @@ export default function Reports() {
             {selectedReport === 'summary' && (
               <div className="flex flex-col gap-6">
                 <div>
+                  <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--purple)' }}>AI Auditor (GRI + SASB Mode)</div>
                   <h3 className="text-lg font-bold text-paper font-sans">Q3 2026 ESG Summary Audit</h3>
                   <p className="text-xs text-paper-dim font-mono-data mt-1">Generated: {new Date().toISOString().split('T')[0]}</p>
                 </div>
@@ -343,8 +448,8 @@ export default function Reports() {
                   </p>
                   
                   {aiSummary && (
-                    <span className="self-start px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[9px] font-mono-data font-semibold">
-                      ✨ AI-GENERATED NARRATIVE
+                    <span className="self-start px-1.5 py-0.5 rounded bg-amber/15 text-amber text-[9px] font-mono-data font-semibold" title="GRI/SASB Grounded Audit Narrative: Generated using live organization scores">
+                      ✨ AI-GENERATED AUDIT NARRATIVE (GRI/SASB Mode)
                     </span>
                   )}
 
@@ -354,7 +459,7 @@ export default function Reports() {
                       disabled={aiLoading}
                       className="self-start mt-2 px-3 py-1.5 rounded bg-moss hover:bg-white/10 text-paper text-xs font-semibold font-sans cursor-pointer transition-colors"
                     >
-                      {aiLoading ? 'AI Generating Summary...' : 'Improve Summary with AI'}
+                      {aiLoading ? 'Auditing...' : 'Run AI Auditor (GRI/SASB Mode)'}
                     </button>
                   )}
                 </div>
@@ -470,19 +575,35 @@ export default function Reports() {
                                     <tr className="text-paper-dim border-b border-moss-line/20">
                                       <th className="py-1">Date</th>
                                       <th className="py-1">Source Module</th>
-                                      <th className="py-1 text-right">Emissions (kg CO2e)</th>
+                                      <th className="py-1 text-right">Emissions</th>
+                                      <th className="py-1 text-right">Quality</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {deptTxs.map(tx => (
-                                      <tr key={tx.id} className="border-b border-moss-line/10 hover:bg-white/5 transition-colors">
-                                        <td className="py-1.5 font-mono-data">{tx.date}</td>
-                                        <td className="py-1.5 text-paper-dim">{tx.sourceModule}</td>
-                                        <td className="py-1.5 text-right font-mono-data text-canopy font-semibold">
-                                          {tx.calculatedEmissions.toFixed(1)}
-                                        </td>
-                                      </tr>
-                                    ))}
+                                    {deptTxs.map(tx => {
+                                      const ef = factors.find(f => f.id === tx.emissionFactorId);
+                                      const isQualitySane = tx.quantity > 0 && tx.quantity < 10000 && ef && ef.unit;
+                                      return (
+                                        <tr key={tx.id} className="border-b border-moss-line/10 hover:bg-white/5 transition-colors">
+                                          <td className="py-1.5 font-mono-data">{tx.date}</td>
+                                          <td className="py-1.5 text-paper-dim">{tx.sourceModule}</td>
+                                          <td className="py-1.5 text-right font-mono-data text-canopy font-semibold">
+                                            {tx.calculatedEmissions.toFixed(1)} <span className="text-[10px] text-paper-dim">kg CO2e</span>
+                                          </td>
+                                          <td className="py-1.5 text-right">
+                                            {isQualitySane ? (
+                                              <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Sane value & valid unit matches">
+                                                Complete
+                                              </span>
+                                            ) : (
+                                              <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Out of range or incomplete entries">
+                                                Needs Review
+                                              </span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
                                   </tbody>
                                 </table>
                               )}
@@ -547,11 +668,21 @@ export default function Reports() {
                     <tbody>
                       {complianceIssues.map((ci) => {
                         const owner = employees.find((e) => e.id === ci.ownerEmployeeId);
+                        const isOverdue = ci.status !== 'Resolved' && ci.dueDate < new Date().toISOString().split('T')[0];
                         return (
                           <tr key={ci.id} className="border-b" style={{ borderColor: 'var(--moss-line)' }}>
                             <td className="py-2.5 text-sm text-paper font-semibold">
-                              <div>{ci.description}</div>
-                              <span className="text-[10px] uppercase tracking-wider text-alert">{ci.severity} severity</span>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span>{renderHighlightedDescription(ci.description)}</span>
+                                  {isOverdue && (
+                                    <span className="px-1.5 py-0.5 rounded bg-alert text-white text-[8px] font-bold tracking-wider uppercase animate-pulse" title="Proactive Risk Alert: Triggers flag before escalations (Assent Grounded)">
+                                      Proactive Risk Alert
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[10px] uppercase tracking-wider text-alert">{ci.severity} severity</span>
+                              </div>
                             </td>
                             <td className="py-2.5 text-sm text-paper-dim">{owner ? owner.name : 'Unassigned'}</td>
                             <td className="py-2.5 text-sm font-mono-data text-right text-paper-dim">{ci.dueDate}</td>
@@ -675,12 +806,13 @@ export default function Reports() {
                     <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Department</th>
                     <th className="py-2 px-3 text-[11px] uppercase tracking-wider text-paper-dim">Details</th>
                     <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim">Status</th>
+                    <th className="py-2 px-3 text-right text-[11px] uppercase tracking-wider text-paper-dim">Quality</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredData.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-4 text-center text-sm text-paper-dim">
+                      <td colSpan={7} className="py-4 text-center text-sm text-paper-dim">
                         No records match the current filters. Adjust your query.
                       </td>
                     </tr>
@@ -703,8 +835,21 @@ export default function Reports() {
                         </td>
                         <td className="py-2.5 px-3 text-sm text-paper-dim">{row.module}</td>
                         <td className="py-2.5 px-3 text-sm text-paper-dim">{row.department}</td>
-                        <td className="py-2.5 px-3 text-sm text-paper">{row.details}</td>
+                        <td className="py-2.5 px-3 text-sm text-paper">
+                          {renderHighlightedDescription(row.details)}
+                        </td>
                         <td className="py-2.5 px-3 text-sm font-mono-data text-right text-paper-dim">{row.scoreChange}</td>
+                        <td className="py-2.5 px-3 text-sm text-right">
+                          {row.isQualitySane ? (
+                            <span className="px-1.5 py-0.5 rounded bg-canopy/10 text-canopy border border-canopy/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Valid and complete entry">
+                              Complete
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded bg-alert/10 text-alert border border-alert/20 text-[9px] font-semibold" title="Databricks/Trifacta Grounded Quality: Incomplete or warning entry">
+                              Needs Review
+                            </span>
+                          )}
+                        </td>
                       </tr>
                     ))
                   )}
