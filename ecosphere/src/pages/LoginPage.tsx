@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { auth, sendSignInLinkToEmail, signInWithGoogle } from '../lib/firebase';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/useToast';
 import Card from '../components/ui/Card';
 import { Mail, Sparkles, AlertCircle } from 'lucide-react';
@@ -20,8 +21,18 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false);
   const [mockLink, setMockLink] = useState<string | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine where to redirect after login (preserve intended destination)
+  const from = (location.state as any)?.from?.pathname || '/';
+
+  // Already logged in — redirect immediately
+  if (user) {
+    return <Navigate to={from} replace />;
+  }
 
   // Google Sign-In handler
   const handleGoogleSignIn = async () => {
@@ -29,7 +40,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
       showToast({ message: 'Signed in with Google successfully!', type: 'success' });
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       showToast({ message: 'Google sign-in failed: ' + err.message, type: 'error' });
     } finally {

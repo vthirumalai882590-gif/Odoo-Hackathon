@@ -555,13 +555,31 @@ export async function signInWithGoogle() {
     return result;
   }
 
-  // Local mock fallback: simulate Google sign-in by picking the first available employee
+  // Local mock fallback: simulate Google sign-in
   const employees = Object.values(mockDb.getCollection('employees'));
-  if (employees.length === 0) {
-    throw new Error('MockAuth: No seeded employees found. Please seed the database first.');
+  
+  let mockGoogleUser: any;
+  if (employees.length > 0) {
+    // Use first seeded employee if available
+    mockGoogleUser = employees[0];
+  } else {
+    // Auto-create a mock Google user so login works before seeding
+    mockGoogleUser = {
+      id: 'mock-google-user',
+      name: 'Google User (Demo)',
+      email: 'demo@gmail.com',
+      departmentId: 'dept-ops',
+      role: 'Admin',
+      status: 'Active',
+      xp: 0,
+      points: 0,
+      badgeIds: [],
+      joinedAt: new Date().toISOString(),
+      photoURL: null,
+    };
+    mockDb.setDoc('employees', mockGoogleUser.id, mockGoogleUser);
   }
-  // Pick first employee as the mock Google user
-  const mockGoogleUser = employees[0] as any;
+  
   mockAuth.setCurrentUser(mockGoogleUser);
   return { user: mockGoogleUser };
 }
