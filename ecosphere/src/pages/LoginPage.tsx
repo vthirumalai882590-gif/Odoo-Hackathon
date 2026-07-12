@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { auth, sendSignInLinkToEmail, signInWithGoogle } from '../lib/firebase';
+import { auth, signInWithEmailAndPassword, signInWithGoogle } from '../lib/firebase';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/useToast';
 import Card from '../components/ui/Card';
-import { Mail, Sparkles, AlertCircle } from 'lucide-react';
+import { Mail, Lock, LogIn } from 'lucide-react';
 
 // Google G SVG icon
 const GoogleIcon = () => (
@@ -18,18 +18,18 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
-  const [mockLink, setMockLink] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine where to redirect after login (preserve intended destination)
+  // Determine redirect page after login
   const from = (location.state as any)?.from?.pathname || '/';
 
-  // Already logged in — redirect immediately
+  // Already logged in — redirect instantly
   if (user) {
     return <Navigate to={from} replace />;
   }
@@ -48,133 +48,115 @@ export default function LoginPage() {
     }
   };
 
-  // Passwordless email link handler
-  const handleSendLink = async (e: React.FormEvent) => {
+  // Standard Email & Password Sign-In handler
+  const handleEmailPasswordSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !password.trim()) {
+      showToast({ message: 'Please fill in both email and password.', type: 'warning' });
+      return;
+    }
 
-    const actionCodeSettings = {
-      url: `${window.location.origin}/finish-login`,
-      handleCodeInApp: true,
-    };
-
+    setLoginLoading(true);
     try {
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      window.localStorage.setItem('emailForSignIn', email);
-      setSent(true);
-      showToast({ message: 'Authentication link created successfully.', type: 'success' });
-
-      const savedLink = window.localStorage.getItem('mockSignInLink');
-      if (savedLink) setMockLink(savedLink);
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      showToast({ message: 'Welcome back! Signed in successfully.', type: 'success' });
+      navigate(from, { replace: true });
     } catch (err: any) {
-      showToast({ message: 'Failed to send link: ' + err.message, type: 'error' });
+      showToast({ message: 'Sign-in failed: ' + (err.message || 'Incorrect credentials'), type: 'error' });
+    } finally {
+      setLoginLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center p-6 bg-[var(--color-canvas)] text-[var(--color-text-primary)]">
       <Card title="EcoSphere ESG Portal" className="max-w-md w-full relative overflow-hidden elevation-3">
-        {/* Decorative glow */}
+        {/* Decorative glow elements */}
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-[var(--color-brand-glow)] blur-3xl pointer-events-none opacity-40" />
         <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-[rgba(59,130,246,0.1)] blur-2xl pointer-events-none" />
 
-        {!sent ? (
-          <div className="flex flex-col gap-5 mt-2 relative">
-            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-              Sign in to your ESG management platform. Use your Google account for the fastest access.
-            </p>
+        <div className="flex flex-col gap-5 mt-2 relative">
+          <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+            Log in to manage Carbon records, CSR campaigns, policies, and rewards.
+          </p>
 
-            {/* ── Google OAuth Button ── */}
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border font-semibold text-sm transition-all cursor-pointer hover:shadow-md active:scale-[0.98] disabled:opacity-60"
-              style={{
-                background: 'white',
-                color: '#1f1f1f',
-                borderColor: '#dadce0',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-              }}
-            >
-              <GoogleIcon />
-              {googleLoading ? 'Connecting...' : 'Continue with Google'}
-            </button>
+          {/* ── Google OAuth Button ── */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading || loginLoading}
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border font-semibold text-sm transition-all cursor-pointer hover:shadow-md active:scale-[0.98] disabled:opacity-60 bg-white"
+            style={{
+              color: '#1f1f1f',
+              borderColor: '#dadce0',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+            }}
+          >
+            <GoogleIcon />
+            {googleLoading ? 'Connecting...' : 'Continue with Google'}
+          </button>
 
-            {/* ── Divider ── */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[var(--color-surface-border)]" />
-              <span className="text-[11px] text-[var(--color-text-tertiary)] font-medium uppercase tracking-widest">or</span>
-              <div className="flex-1 h-px bg-[var(--color-surface-border)]" />
-            </div>
+          {/* ── Divider ── */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-[var(--color-surface-border)]" />
+            <span className="text-[11px] text-[var(--color-text-tertiary)] font-medium uppercase tracking-widest">or</span>
+            <div className="flex-1 h-px bg-[var(--color-surface-border)]" />
+          </div>
 
-            {/* ── Passwordless Email Link ── */}
-            <form onSubmit={handleSendLink} className="flex flex-col gap-3">
+          {/* ── Email & Password Sign-In Form ── */}
+          <form onSubmit={handleEmailPasswordSignIn} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <div>
                 <label className="block text-[10px] uppercase tracking-wider text-[var(--color-text-tertiary)] mb-1 font-semibold">
-                  Passwordless Email Link
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 w-4 h-4 text-[var(--color-text-tertiary)]" />
                   <input
                     type="email"
-                    placeholder="e.g. you@gmail.com"
+                    placeholder="e.g. thiru@ecosphere.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="input-field pl-9"
+                    required
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                className="btn-primary w-full justify-center py-2.5 rounded-xl text-white font-semibold transition-all cursor-pointer"
-              >
-                <Sparkles size={14} />
-                Send Magic Link
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4 text-center py-4 animate-fade-in relative">
-            <div className="w-12 h-12 rounded-full bg-[var(--color-brand-glow)] flex items-center justify-center text-[var(--color-brand-400)] mx-auto mb-2">
-              <Mail size={24} />
-            </div>
-            <h4 className="font-semibold text-lg text-[var(--color-text-primary)]">Check Your Inbox</h4>
-            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed max-w-sm mx-auto">
-              We sent a passwordless link to <strong className="text-[var(--color-text-primary)]">{email}</strong>.
-            </p>
 
-            {mockLink && (
-              <div className="mt-4 p-4 rounded-xl border bg-[var(--color-surface-3)] border-[var(--color-surface-border)] text-left flex flex-col gap-3">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--color-xp-gold)]">
-                  <AlertCircle size={14} />
-                  <span>Local Mock Link Simulator</span>
+              <div>
+                <label className="block text-[10px] uppercase tracking-wider text-[var(--color-text-tertiary)] mb-1 font-semibold flex justify-between">
+                  <span>Password</span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 w-4 h-4 text-[var(--color-text-tertiary)]" />
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-field pl-9"
+                    required
+                  />
                 </div>
-                <p className="text-[10px] text-[var(--color-text-secondary)] leading-relaxed">
-                  You are running in offline demo mode. Click below to simulate clicking the secure link in your email.
-                </p>
-                <a
-                  href={mockLink}
-                  className="w-full text-center text-xs py-2 rounded-lg font-bold transition-colors"
-                  style={{
-                    background: 'var(--color-xp-gold)',
-                    color: 'var(--color-canvas)',
-                    boxShadow: '0 2px 8px var(--color-xp-glow)',
-                  }}
-                >
-                  ✉️ Simulate Email Click
-                </a>
               </div>
-            )}
+            </div>
 
             <button
-              onClick={() => { setSent(false); setMockLink(null); }}
-              className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors cursor-pointer mt-2"
+              type="submit"
+              disabled={loginLoading || googleLoading}
+              className="btn-primary w-full justify-center py-2.5 rounded-xl text-white font-semibold transition-all cursor-pointer disabled:opacity-60"
             >
-              ← Back to sign-in options
+              <LogIn size={14} />
+              {loginLoading ? 'Signing in...' : 'Sign In'}
             </button>
+          </form>
+          
+          <div className="text-center mt-1">
+            <span className="text-[10px] text-[var(--color-text-tertiary)] italic">
+              Demo mode: Try any seeded employee email (e.g. thiru@ecosphere.com) with any password.
+            </span>
           </div>
-        )}
+        </div>
       </Card>
     </div>
   );

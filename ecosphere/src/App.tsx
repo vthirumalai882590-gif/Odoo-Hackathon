@@ -12,7 +12,6 @@ import Gamification from './pages/Gamification';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import LoginPage from './pages/LoginPage';
-import FinishLogin from './pages/FinishLogin';
 
 export default function App() {
   return (
@@ -23,7 +22,6 @@ export default function App() {
             <Routes>
               {/* Public auth routes — accessible without login */}
               <Route path="login" element={<LoginPage />} />
-              <Route path="finish-login" element={<FinishLogin />} />
 
               {/* Protected routes — redirects to /login if not authenticated */}
               <Route element={<ProtectedRoute />}>
