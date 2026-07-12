@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { db, collection, onSnapshot, doc, callEsgAI } from '../lib/firebase';
 import { calculateESGScores } from '../lib/scoring';
 import type {
@@ -242,12 +243,15 @@ export default function Dashboard() {
       )}
 
       <div>
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-          <span className="text-grad-canopy">Eco</span>Sphere
-          <span className="text-base ml-2 font-body font-normal" style={{ color: 'var(--paper-dim)' }}>— Organization Dashboard</span>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
+          <span style={{ background: 'linear-gradient(135deg, var(--color-brand-400), var(--color-brand-500))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Eco</span>Sphere
+          <span className="text-base ml-2 font-normal" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)', WebkitTextFillColor: 'var(--color-text-secondary)' }}>— Organization Dashboard</span>
         </h1>
-        <p className="text-xs mt-1 flex items-center gap-2" style={{ color: 'var(--paper-dim)' }}>
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full badge badge-green">● Live</span>
+        <p className="text-xs mt-1.5 flex items-center gap-2" style={{ color: 'var(--color-text-secondary)' }}>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: 'var(--color-brand-400)', border: '1px solid rgba(34,197,94,0.2)' }}>● Live</span>
           Q3 2026 · aggregated in real time across all operational nodes
         </p>
       </div>
@@ -256,12 +260,13 @@ export default function Dashboard() {
       <div className="grid grid-cols-12 gap-4 items-stretch">
 
         {/* ESG Ring Gauge — compact 3-col */}
-        <div
-          className="col-span-12 md:col-span-3 rounded-xl border p-4 flex flex-col items-center justify-center"
+        <motion.div
+          whileHover={{ y: -2 }}
+          transition={{ duration: 0.18 }}
+          className="col-span-12 md:col-span-3 rounded-2xl border p-5 flex flex-col items-center justify-center elevation-2"
           style={{
-            background: 'var(--ink-raised)',
-            borderColor: 'var(--moss-line)',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)',
+            background: 'var(--color-surface-2)',
+            borderColor: 'var(--color-surface-border)',
             minHeight: '200px',
           }}
         >
@@ -272,23 +277,22 @@ export default function Dashboard() {
             overall={overallScore.total}
             size={160}
           />
-        </div>
+        </motion.div>
 
-        {/* 6 KPI Tiles — 9-col, 3×2 grid */}
-        <div className="col-span-12 md:col-span-9 grid grid-cols-3 gap-3">
-          <KpiTile label="Carbon this month" value={formattedCarbon} accent="var(--canopy)" delta="aggregated scope" icon={<span style={{ fontSize: '14px' }}>🌿</span>} />
-          <KpiTile label="CSR participation" value={`${totalCsrRate}%`} accent="var(--slate)" delta="volunteering rate" icon={<span style={{ fontSize: '14px' }}>🤝</span>} />
+        <div className="col-span-12 md:col-span-9 grid grid-cols-3 gap-4">
+          <KpiTile label="Carbon this month" value={formattedCarbon} accent="var(--color-environmental)" delta="aggregated scope" icon={<span style={{ fontSize: '14px' }}>🌿</span>} />
+          <KpiTile label="CSR participation" value={`${totalCsrRate}%`} accent="var(--color-social)" delta="volunteering rate" icon={<span style={{ fontSize: '14px' }}>🤝</span>} />
           <KpiTile
             label="Open compliance"
             value={openComplianceCount.toString()}
-            accent={openComplianceCount > 0 ? 'var(--alert)' : 'var(--canopy)'}
+            accent={openComplianceCount > 0 ? 'var(--color-diff-hard)' : 'var(--color-brand-400)'}
             delta={overdueCount > 0 ? `${overdueCount} Proactive Risk Alerts` : '0 Risk Alerts'}
             deltaPositive={overdueCount === 0}
             icon={<span style={{ fontSize: '14px' }}>⚖️</span>}
           />
-          <KpiTile label="Active challenges" value={activeChallengesCount.toString()} accent="var(--amber)" delta="employee engagement" icon={<span style={{ fontSize: '14px' }}>🏆</span>} />
-          <KpiTile label="Badges unlocked" value={totalBadgesUnlocked.toString()} accent="var(--purple)" delta="achievements earned" icon={<span style={{ fontSize: '14px' }}>🎖️</span>} />
-          <KpiTile label="Policy ack. rate" value={`${policyAckRate}%`} accent="var(--teal)" delta="compliance signoffs" icon={<span style={{ fontSize: '14px' }}>📋</span>} />
+          <KpiTile label="Active challenges" value={activeChallengesCount.toString()} accent="var(--color-xp-gold)" delta="employee engagement" icon={<span style={{ fontSize: '14px' }}>🏆</span>} />
+          <KpiTile label="Badges unlocked" value={totalBadgesUnlocked.toString()} accent="var(--color-governance)" delta="achievements earned" icon={<span style={{ fontSize: '14px' }}>🎖️</span>} />
+          <KpiTile label="Policy ack. rate" value={`${policyAckRate}%`} accent="#2dd4bf" delta="compliance signoffs" icon={<span style={{ fontSize: '14px' }}>📋</span>} />
         </div>
       </div>
 
@@ -297,16 +301,16 @@ export default function Dashboard() {
 
         {/* AI Executive Summary */}
         <div
-          className="col-span-12 md:col-span-4 rounded-xl border p-5 flex flex-col gap-3"
-          style={{ background: 'var(--ink-raised)', borderColor: 'var(--moss-line)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+          className="col-span-12 md:col-span-4 rounded-2xl border p-5 flex flex-col gap-3 elevation-1"
+          style={{ background: 'var(--color-surface-2)', borderColor: 'var(--color-surface-border)' }}
         >
           <div>
-            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--purple)' }}>AI Analyst (FactSet + Preqin Mode)</div>
-            <h3 className="font-display text-sm font-semibold" style={{ color: 'var(--paper)' }}>Executive Summary & Projections</h3>
+            <div className="text-[10px] uppercase tracking-[0.15em] font-semibold mb-0.5" style={{ color: 'var(--color-governance)' }}>AI Analyst (FactSet + Preqin Mode)</div>
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>Executive Summary &amp; Projections</h3>
           </div>
           {!aiSummary ? (
             <div className="flex flex-col gap-3 flex-1 justify-between">
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--paper-dim)' }}>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
                 Generate a natural-language report summarizing quarterly ESG performance and next-period score projections.
               </p>
               <button

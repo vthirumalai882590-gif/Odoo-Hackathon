@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   db,
   collection,
@@ -287,22 +288,29 @@ export default function Environmental() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-environmental)' }} />
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-environmental)' }}>Environmental</span>
+        </div>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
           Environmental Ledger
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
+        <p className="text-sm mt-1.5" style={{ color: 'var(--color-text-secondary)' }}>
           Manage emissions tracking, calculate carbon footprints, and check sustainability goals.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b animate-fade-in" style={{ borderColor: 'var(--moss-line)' }}>
+      {/* Tabs — Framer Motion sliding indicator */}
+      <div className="flex border-b relative" style={{ borderColor: 'var(--color-surface-border)' }}>
         {(
           [
-            { id: 'factors', label: 'Emission Factors' },
-            { id: 'txs', label: 'Carbon Ledger' },
-            { id: 'goals', label: 'Sustainability Goals' },
-            { id: 'charts', label: 'Department Analytics' }
+            { id: 'factors', label: 'Emission Factors', icon: '🌿' },
+            { id: 'txs', label: 'Carbon Ledger', icon: '📊' },
+            { id: 'goals', label: 'Sustainability Goals', icon: '🎯' },
+            { id: 'charts', label: 'Department Analytics', icon: '📈' }
           ] as const
         ).map((tab) => (
           <button
@@ -311,13 +319,19 @@ export default function Environmental() {
               setActiveTab(tab.id);
               setErrorMsg('');
             }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-canopy text-paper font-semibold'
-                : 'border-transparent text-paper-dim hover:text-paper'
-            }`}
+            className="relative px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer"
+            style={{ color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
           >
+            <span className="text-xs">{tab.icon}</span>
             {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="env-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                style={{ background: 'var(--color-environmental)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>

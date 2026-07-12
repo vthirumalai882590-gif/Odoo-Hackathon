@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   db,
   collection,
@@ -262,22 +263,29 @@ export default function Settings() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-          Settings & Configuration
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-text-secondary)' }} />
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-text-secondary)' }}>Settings</span>
+        </div>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
+          Settings &amp; Configuration
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
+        <p className="text-sm mt-1.5" style={{ color: 'var(--color-text-secondary)' }}>
           Manage departments, categories, global weights, and test environments.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b" style={{ borderColor: 'var(--moss-line)' }}>
+      {/* Tabs — Framer Motion sliding indicator */}
+      <div className="flex border-b relative" style={{ borderColor: 'var(--color-surface-border)' }}>
         {(
           [
-            { id: 'depts', label: 'Departments' },
-            { id: 'cats', label: 'Categories' },
-            { id: 'config', label: 'ESG Config' },
-            { id: 'seed', label: 'Data Management' }
+            { id: 'depts', label: 'Departments', icon: '🏢' },
+            { id: 'cats', label: 'Categories', icon: '🏷️' },
+            { id: 'config', label: 'ESG Config', icon: '⚙️' },
+            { id: 'seed', label: 'Data Management', icon: '🗄️' }
           ] as const
         ).map((tab) => (
           <button
@@ -286,13 +294,19 @@ export default function Settings() {
               setActiveTab(tab.id);
               setErrorMsg('');
             }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-canopy text-paper font-semibold'
-                : 'border-transparent text-paper-dim hover:text-paper'
-            }`}
+            className="relative px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer"
+            style={{ color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
           >
+            <span className="text-xs">{tab.icon}</span>
             {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="settings-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                style={{ background: 'var(--color-brand-500)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>

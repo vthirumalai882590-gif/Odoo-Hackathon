@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { db, collection, onSnapshot, doc, callEsgAI } from '../lib/firebase';
 import { calculateESGScores } from '../lib/scoring';
 import type {
@@ -329,32 +330,45 @@ export default function Reports() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto print:bg-white print:text-black print:p-0">
       <div className="print:hidden">
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-          Audit & Reporting Center
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-brand-400)' }} />
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-brand-400)' }}>Reports</span>
+        </div>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
+          Audit &amp; Reporting Center
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
+        <p className="text-sm mt-1.5" style={{ color: 'var(--color-text-secondary)' }}>
           Generate standardized ESG reports, build custom queries, and export compliant documents.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b print:hidden" style={{ borderColor: 'var(--moss-line)' }}>
-        <button
-          onClick={() => setActiveTab('standard')}
-          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'standard' ? 'border-canopy text-paper font-semibold' : 'border-transparent text-paper-dim hover:text-paper'
-          }`}
-        >
-          Standard ESG Reports
-        </button>
-        <button
-          onClick={() => setActiveTab('builder')}
-          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'builder' ? 'border-canopy text-paper font-semibold' : 'border-transparent text-paper-dim hover:text-paper'
-          }`}
-        >
-          Custom Report Builder
-        </button>
+      {/* Tabs — Framer Motion sliding indicator */}
+      <div className="flex border-b relative print:hidden" style={{ borderColor: 'var(--color-surface-border)' }}>
+        {[
+          { id: 'standard', label: 'Standard ESG Reports', icon: '📊' },
+          { id: 'builder', label: 'Custom Report Builder', icon: '🛠️' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className="relative px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer"
+            style={{ color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
+          >
+            <span className="text-xs">{tab.icon}</span>
+            {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="reports-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                style={{ background: 'var(--color-brand-500)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Standard Reports tab */}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   db,
   collection,
@@ -292,22 +293,29 @@ export default function Social() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-social)' }} />
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-social)' }}>Social</span>
+        </div>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
           Social Ledger
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
+        <p className="text-sm mt-1.5" style={{ color: 'var(--color-text-secondary)' }}>
           Review employee engagement, CSR activities, diversity aggregates, and training completions.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b animate-fade-in" style={{ borderColor: 'var(--moss-line)' }}>
+      {/* Tabs — Framer Motion sliding indicator */}
+      <div className="flex border-b relative" style={{ borderColor: 'var(--color-surface-border)' }}>
         {(
           [
-            { id: 'activities', label: 'CSR Activities' },
-            { id: 'participations', label: 'Review Queue' },
-            { id: 'diversity', label: 'Workforce Diversity' },
-            { id: 'training', label: 'Training Matrix' }
+            { id: 'activities', label: 'CSR Activities', icon: '🤝' },
+            { id: 'participations', label: 'Review Queue', icon: '📝' },
+            { id: 'diversity', label: 'Workforce Diversity', icon: '📊' },
+            { id: 'training', label: 'Training Matrix', icon: '🎓' }
           ] as const
         ).map((tab) => (
           <button
@@ -317,13 +325,19 @@ export default function Social() {
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-canopy text-paper font-semibold'
-                : 'border-transparent text-paper-dim hover:text-paper'
-            }`}
+            className="relative px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer"
+            style={{ color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
           >
+            <span className="text-xs">{tab.icon}</span>
             {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="social-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                style={{ background: 'var(--color-social)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>

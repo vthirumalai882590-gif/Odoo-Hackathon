@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   db,
   collection,
@@ -388,22 +389,29 @@ export default function Governance() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="font-display text-2xl" style={{ color: 'var(--paper)' }}>
-          Governance & Compliance Ledger
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full" style={{ background: 'var(--color-governance)' }} />
+          <span className="text-[11px] uppercase tracking-[0.15em] font-semibold" style={{ color: 'var(--color-governance)' }}>Governance</span>
+        </div>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+        >
+          Governance &amp; Compliance Ledger
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--paper-dim)' }}>
+        <p className="text-sm mt-1.5" style={{ color: 'var(--color-text-secondary)' }}>
           Register corporate policies, check employee acknowledgements, track audits, and resolve safety/compliance issues.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b animate-fade-in" style={{ borderColor: 'var(--moss-line)' }}>
+      {/* Tabs — Framer Motion sliding indicator */}
+      <div className="flex border-b relative" style={{ borderColor: 'var(--color-surface-border)' }}>
         {(
           [
-            { id: 'policies', label: 'ESG Policies' },
-            { id: 'acks', label: 'Policy Acknowledgements' },
-            { id: 'audits', label: 'Audits Lifecycle' },
-            { id: 'issues', label: 'Compliance Issues' }
+            { id: 'policies', label: 'ESG Policies', icon: '📜' },
+            { id: 'acks', label: 'Policy Acknowledgements', icon: '✅' },
+            { id: 'audits', label: 'Audits Lifecycle', icon: '🔍' },
+            { id: 'issues', label: 'Compliance Issues', icon: '⚠️' }
           ] as const
         ).map((tab) => (
           <button
@@ -413,13 +421,19 @@ export default function Governance() {
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-canopy text-paper font-semibold'
-                : 'border-transparent text-paper-dim hover:text-paper'
-            }`}
+            className="relative px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer"
+            style={{ color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
           >
+            <span className="text-xs">{tab.icon}</span>
             {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="gov-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                style={{ background: 'var(--color-governance)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>

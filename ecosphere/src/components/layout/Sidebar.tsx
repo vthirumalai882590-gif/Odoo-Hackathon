@@ -49,57 +49,57 @@ export default function Sidebar() {
   const getThemeStyles = (to: string) => {
     if (to === '/') {
       return {
-        accent: isLight ? 'var(--paper)' : '#ede8d8',
-        glow: isLight ? 'rgba(13,31,21,0.06)' : 'rgba(237,232,216,0.12)',
+        accent: 'var(--color-brand-400)',
+        glow: 'var(--color-brand-glow)',
       };
     }
     if (to === '/environmental') {
       return {
-        accent: 'var(--canopy)',
-        glow: 'var(--canopy-glow)',
+        accent: 'var(--color-environmental)',
+        glow: 'rgba(34, 197, 94, 0.15)',
       };
     }
     if (to === '/social') {
       return {
-        accent: 'var(--slate)',
-        glow: 'var(--slate-glow)',
+        accent: 'var(--color-social)',
+        glow: 'rgba(59, 130, 246, 0.15)',
       };
     }
     if (to === '/governance') {
       return {
-        accent: 'var(--amber)',
-        glow: 'var(--amber-glow)',
+        accent: 'var(--color-governance)',
+        glow: 'rgba(168, 85, 247, 0.15)',
       };
     }
     if (to === '/gamification') {
       return {
-        accent: 'var(--purple)',
-        glow: 'var(--purple-glow)',
+        accent: 'var(--color-xp-gold)',
+        glow: 'var(--color-xp-glow)',
       };
     }
     if (to === '/reports') {
       return {
-        accent: 'var(--teal)',
-        glow: 'var(--teal-glow)',
+        accent: 'var(--color-brand-400)',
+        glow: 'var(--color-brand-glow)',
       };
     }
     if (to === '/settings') {
       return {
-        accent: 'var(--paper-dim)',
-        glow: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(138,130,116,0.1)',
+        accent: 'var(--color-text-secondary)',
+        glow: 'rgba(255, 255, 255, 0.04)',
       };
     }
-    return { accent: 'var(--paper)', glow: 'transparent' };
+    return { accent: 'var(--color-text-primary)', glow: 'transparent' };
   };
 
   return (
     <aside
-      className="w-60 shrink-0 h-full flex flex-col border-r transition-all duration-300"
+      className="w-60 shrink-0 h-full flex flex-col border-r transition-all duration-300 elevation-1"
       style={{
         background: isLight
-          ? 'var(--ink-raised)'
-          : 'linear-gradient(180deg, #0e1812 0%, #090e0c 100%)',
-        borderColor: 'var(--moss-line)',
+          ? 'var(--color-surface-2)'
+          : 'var(--color-surface-1)',
+        borderColor: 'var(--color-surface-border)',
       }}
     >
       {/* Logo */}
@@ -107,23 +107,23 @@ export default function Sidebar() {
         <div
           className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
           style={{
-            background: 'linear-gradient(135deg, #3ecf7a, #1fa855)',
-            boxShadow: '0 0 18px rgba(62,207,122,0.4)',
+            background: 'linear-gradient(135deg, var(--color-brand-400), var(--color-brand-600))',
+            boxShadow: '0 0 18px var(--color-brand-glow)',
           }}
         >
           <Leaf size={15} color="white" strokeWidth={2.2} />
         </div>
         <div>
-          <div className="font-display text-[17px] font-semibold" style={{ color: 'var(--paper)', letterSpacing: '-0.02em' }}>
+          <div className="font-display text-[17px] font-semibold" style={{ color: 'var(--color-text-primary)', letterSpacing: '-0.02em' }}>
             EcoSphere
           </div>
-          <div className="text-[9px] tracking-widest uppercase font-semibold" style={{ color: 'var(--canopy)', opacity: 0.8 }}>
+          <div className="text-[9px] tracking-widest uppercase font-semibold" style={{ color: 'var(--color-brand-400)', opacity: 0.8 }}>
             ESG Platform
           </div>
         </div>
       </div>
 
-      <div className="ledger-rule mx-4" />
+      <div className="ledger-rule mx-4" style={{ borderColor: 'var(--color-surface-border)' }} />
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
@@ -152,9 +152,9 @@ export default function Sidebar() {
                       paddingLeft: '10px',
                       paddingRight: '10px',
                       background: isActive
-                        ? (isLight ? 'var(--moss)' : `linear-gradient(90deg, ${glow}, transparent 80%)`)
+                        ? `linear-gradient(90deg, ${glow}, var(--color-surface-3) 80%)`
                         : 'transparent',
-                      color: isActive ? accent : 'var(--paper-dim)',
+                      color: isActive ? accent : 'var(--color-text-secondary)',
                       borderLeft: isActive ? `2px solid ${accent}` : '2px solid transparent',
                       boxShadow: (isActive && !isLight) ? `0 0 12px ${glow}` : 'none',
                     })}
@@ -169,7 +169,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="ledger-rule mx-4" />
+      <div className="ledger-rule mx-4" style={{ borderColor: 'var(--color-surface-border)' }} />
       <div className="px-4 py-3">
         <div
           className="flex flex-col gap-2 p-3 rounded-xl border"
@@ -178,37 +178,37 @@ export default function Sidebar() {
             borderColor: 'var(--color-surface-border)',
           }}
         >
-          <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-text-secondary">
+          <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--color-text-secondary)' }}>
             <span>ESG Weighting</span>
-            <span className="font-mono text-brand-400">100%</span>
+            <span className="font-mono" style={{ color: 'var(--color-brand-400)' }}>100%</span>
           </div>
           
           {/* Segmented bar */}
-          <div className="w-full h-2 rounded-full overflow-hidden flex bg-surface-3 border border-surface-border">
+          <div className="w-full h-2 rounded-full overflow-hidden flex border" style={{ background: 'var(--color-surface-3)', borderColor: 'var(--color-surface-border)' }}>
             {/* Environmental - 40% */}
             <div
-              className="h-full bg-environmental relative group cursor-help"
-              style={{ width: '40%' }}
+              className="h-full relative group cursor-help"
+              style={{ width: '40%', background: 'var(--color-environmental)' }}
               title="Environmental (40%): Tracks Carbon Scope 1/2/3 and operations targets"
             />
             {/* Social - 30% */}
             <div
-              className="h-full bg-social relative group cursor-help border-l border-surface-border"
-              style={{ width: '30%' }}
+              className="h-full relative group cursor-help border-l"
+              style={{ width: '30%', background: 'var(--color-social)', borderColor: 'var(--color-surface-border)' }}
               title="Social (30%): CSR volunteer activities, XP levels, and rewards match rate"
             />
             {/* Governance - 30% */}
             <div
-              className="h-full bg-governance relative group cursor-help border-l border-surface-border"
-              style={{ width: '30%' }}
+              className="h-full relative group cursor-help border-l"
+              style={{ width: '30%', background: 'var(--color-governance)', borderColor: 'var(--color-surface-border)' }}
               title="Governance (30%): Compliance issue resolution, audits, and policy signs"
             />
           </div>
 
-          <div className="flex justify-between items-center text-[9px] font-mono text-text-tertiary mt-0.5">
-            <span className="text-environmental font-semibold">Env 40%</span>
-            <span className="text-social font-semibold">Soc 30%</span>
-            <span className="text-governance font-semibold">Gov 30%</span>
+          <div className="flex justify-between items-center text-[9px] font-mono mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+            <span className="font-semibold" style={{ color: 'var(--color-environmental)' }}>Env 40%</span>
+            <span className="font-semibold" style={{ color: 'var(--color-social)' }}>Soc 30%</span>
+            <span className="font-semibold" style={{ color: 'var(--color-governance)' }}>Gov 30%</span>
           </div>
         </div>
       </div>

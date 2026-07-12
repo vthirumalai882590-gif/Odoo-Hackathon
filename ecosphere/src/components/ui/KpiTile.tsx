@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 
 interface KpiTileProps {
   label: string;
@@ -15,57 +16,80 @@ export default function KpiTile({
   value,
   delta,
   deltaPositive = true,
-  accent = 'var(--paper)',
+  accent = 'var(--color-brand-400)',
   icon,
   subLabel,
 }: KpiTileProps) {
   return (
-    <div
-      className="rounded-xl border p-4 flex flex-col gap-3 relative overflow-hidden group transition-all duration-200 hover:-translate-y-0.5"
+    <motion.div
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
+      className="rounded-2xl border p-5 flex flex-col gap-3 relative overflow-hidden group elevation-1"
       style={{
-        background: 'var(--ink-raised)',
-        borderColor: 'var(--moss-line)',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)',
+        background: 'var(--color-surface-2)',
+        borderColor: 'var(--color-surface-border)',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = `color-mix(in srgb, ${accent} 30%, var(--color-surface-border))`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-surface-border)';
       }}
     >
-      {/* Subtle gradient overlay */}
+      {/* Radial accent glow on hover */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{ background: `radial-gradient(ellipse at top right, ${accent}08, transparent 60%)` }}
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"
+        style={{ background: `radial-gradient(ellipse at top right, color-mix(in srgb, ${accent} 12%, transparent), transparent 65%)` }}
       />
 
-      <div className="flex items-center justify-between">
-        <div className="text-[11px] tracking-wide uppercase font-medium" style={{ color: 'var(--paper-dim)' }}>
+      <div className="flex items-center justify-between relative z-10">
+        <div
+          className="text-[11px] tracking-[0.08em] uppercase font-semibold"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
           {label}
         </div>
         {icon && (
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: `${accent}18`, color: accent }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center"
+            style={{
+              background: `color-mix(in srgb, ${accent} 14%, transparent)`,
+              color: accent,
+              border: `1px solid color-mix(in srgb, ${accent} 20%, transparent)`,
+            }}
           >
             {icon}
           </div>
         )}
       </div>
 
-      <div>
-        <div className="font-mono-data text-2xl font-bold animate-count-up" style={{ color: accent }}>
+      <div className="relative z-10">
+        <div
+          className="text-2xl font-bold font-mono animate-count-up"
+          style={{ color: accent, fontFamily: 'var(--font-mono)' }}
+        >
           {value}
         </div>
         {subLabel && (
-          <div className="text-[11px] mt-0.5" style={{ color: 'var(--paper-dim)' }}>{subLabel}</div>
+          <div className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+            {subLabel}
+          </div>
         )}
       </div>
 
       {delta && (
         <div
-          className="flex items-center gap-1 text-xs font-mono-data font-semibold"
-          style={{ color: deltaPositive ? 'var(--canopy-bright)' : 'var(--alert)' }}
+          className="flex items-center gap-1 text-xs font-semibold relative z-10"
+          style={{
+            color: deltaPositive ? 'var(--color-brand-400)' : 'var(--color-diff-hard)',
+            fontFamily: 'var(--font-mono)',
+          }}
         >
           <span className="text-[10px]">{deltaPositive ? '▲' : '▼'}</span>
           {delta}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
