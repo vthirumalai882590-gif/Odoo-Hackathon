@@ -4,7 +4,7 @@ import { auth, signInWithEmailAndPassword, signInWithGoogle } from '../lib/fireb
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../hooks/useToast';
 import Card from '../components/ui/Card';
-import { Mail, Lock, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 // Google G SVG icon
 const GoogleIcon = () => (
@@ -111,13 +111,12 @@ export default function LoginPage() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 w-4 h-4 text-[var(--color-text-tertiary)]" />
                   <input
                     type="email"
                     placeholder="e.g. thiru@ecosphere.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="input-field pl-9"
+                    className="input-field"
                     required
                   />
                 </div>
@@ -128,13 +127,12 @@ export default function LoginPage() {
                   <span>Password</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 w-4 h-4 text-[var(--color-text-tertiary)]" />
                   <input
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="input-field pl-9"
+                    className="input-field"
                     required
                   />
                 </div>
