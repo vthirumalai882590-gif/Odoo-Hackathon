@@ -395,7 +395,7 @@ export default function Gamification() {
               <div className="flex-1 text-center p-2 rounded-lg" style={{ background: 'rgba(91,141,238,0.1)', border: '1px solid rgba(91,141,238,0.2)' }}>
                 <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--slate)' }}>Badges</div>
                 <div className="text-base font-bold font-mono-data" style={{ color: 'var(--slate)' }}>
-                  {badges.filter(b => b.awardedTo === activeEmployee.id).length}
+                  {activeEmployee.badgeIds?.length || 0}
                 </div>
               </div>
             </div>
@@ -458,11 +458,11 @@ export default function Gamification() {
           {/* Kanban Board */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {([
-              { status: 'Draft',        color: '#8a8274', grad: 'linear-gradient(135deg,#3d3a34,#2a2820)', badge: 'badge-grey',   btnBg: 'rgba(255,255,255,0.07)' },
-              { status: 'Active',       color: '#3ecf7a', grad: 'linear-gradient(135deg,rgba(62,207,122,0.12),rgba(30,100,55,0.08))', badge: 'badge-green',  btnBg: 'rgba(62,207,122,0.15)' },
-              { status: 'Under Review', color: '#f5a623', grad: 'linear-gradient(135deg,rgba(245,166,35,0.12),rgba(120,80,10,0.08))', badge: 'badge-amber',  btnBg: 'rgba(245,166,35,0.15)' },
-              { status: 'Completed',    color: '#a78bfa', grad: 'linear-gradient(135deg,rgba(167,139,250,0.12),rgba(80,50,150,0.08))', badge: 'badge-purple', btnBg: 'rgba(167,139,250,0.15)' },
-            ] as { status: Challenge['status'], color: string, grad: string, badge: string, btnBg: string }[]).map(({ status, color, grad, badge, btnBg }) => {
+              { status: 'Draft',        color: '#8a8274', grad: 'linear-gradient(135deg,#3d3a34,#2a2820)', btnBg: 'rgba(255,255,255,0.07)' },
+              { status: 'Active',       color: '#3ecf7a', grad: 'linear-gradient(135deg,rgba(62,207,122,0.12),rgba(30,100,55,0.08))', btnBg: 'rgba(62,207,122,0.15)' },
+              { status: 'Under Review', color: '#f5a623', grad: 'linear-gradient(135deg,rgba(245,166,35,0.12),rgba(120,80,10,0.08))', btnBg: 'rgba(245,166,35,0.15)' },
+              { status: 'Completed',    color: '#a78bfa', grad: 'linear-gradient(135deg,rgba(167,139,250,0.12),rgba(80,50,150,0.08))', btnBg: 'rgba(167,139,250,0.15)' },
+            ] as { status: Challenge['status'], color: string, grad: string, btnBg: string }[]).map(({ status, color, grad, btnBg }) => {
               const list = challenges.filter((c) => c.status === status);
               return (
                 <div

@@ -14,7 +14,6 @@ import type {
   ESGConfig
 } from '../types';
 import GrowthRingGauge from '../components/ui/GrowthRingGauge';
-import Card from '../components/ui/Card';
 import KpiTile from '../components/ui/KpiTile';
 import { Link } from 'react-router-dom';
 
