@@ -18,6 +18,8 @@ import {
 } from 'firebase/firestore';
 import {
   getAuth,
+  GoogleAuthProvider,
+  signInWithPopup as realSignInWithPopup,
   signInWithEmailAndPassword as realSignInWithEmailAndPassword,
   createUserWithEmailAndPassword as realCreateUserWithEmailAndPassword,
   signOut as realSignOut,
@@ -521,6 +523,47 @@ export async function signInWithEmailLink(authInstance: any, email: string, url:
 
   mockAuth.setCurrentUser(employee);
   return { user: employee };
+}
+
+export async function signInWithGoogle() {
+  if (isRealFirebase) {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
+    const result = await realSignInWithPopup(realAuth, provider);
+    // After Google OAuth, try to find or create the employee record in Firestore
+    const firebaseUser = result.user;
+    const docRef = realDoc(realDb, 'employees', firebaseUser.uid);
+    const docSnap = await realGetDoc(docRef);
+    if (!docSnap.exists()) {
+      // First-time Google login: create an employee record
+      const newEmp = {
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'New User',
+        email: firebaseUser.email || '',
+        departmentId: 'dept-ops',
+        role: 'Employee' as const,
+        status: 'Active' as const,
+        xp: 0,
+        points: 0,
+        badgeIds: [],
+        joinedAt: new Date().toISOString(),
+        photoURL: firebaseUser.photoURL || null,
+      };
+      await realSetDoc(docRef, newEmp);
+    }
+    return result;
+  }
+
+  // Local mock fallback: simulate Google sign-in by picking the first available employee
+  const employees = Object.values(mockDb.getCollection('employees'));
+  if (employees.length === 0) {
+    throw new Error('MockAuth: No seeded employees found. Please seed the database first.');
+  }
+  // Pick first employee as the mock Google user
+  const mockGoogleUser = employees[0] as any;
+  mockAuth.setCurrentUser(mockGoogleUser);
+  return { user: mockGoogleUser };
 }
 
 export function clearMockDatabase() {
