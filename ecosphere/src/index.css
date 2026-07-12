@@ -64,6 +64,54 @@
   --grad-glass:   linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
 }
 
+/* ─── Light Theme ─────────────────────────────────────────── */
+[data-theme="light"] {
+  /* Backgrounds */
+  --ink:         #f0f7f3;
+  --ink-raised:  #ffffff;
+  --ink-elevated:#e8f2ec;
+
+  /* Surface greens */
+  --moss:        #e2f0e8;
+  --moss-mid:    #d4e8dc;
+  --moss-line:   #c2d9cb;
+
+  /* Text */
+  --paper:       #0d1f15;
+  --paper-mid:   #2a4030;
+  --paper-dim:   #5a7a66;
+
+  /* Keep vivid accents — slightly richer for light bg */
+  --canopy:      #16a34a;
+  --canopy-dim:  #15803d;
+  --canopy-glow: rgba(22,163,74,0.18);
+
+  --amber:       #d97706;
+  --amber-dim:   #b45309;
+  --amber-glow:  rgba(217,119,6,0.18);
+
+  --slate:       #2563eb;
+  --slate-dim:   #1d4ed8;
+  --slate-glow:  rgba(37,99,235,0.18);
+
+  --purple:      #7c3aed;
+  --purple-dim:  #6d28d9;
+  --purple-glow: rgba(124,58,237,0.18);
+
+  --teal:        #0891b2;
+  --teal-glow:   rgba(8,145,178,0.18);
+
+  --rose:        #e11d48;
+  --rose-glow:   rgba(225,29,72,0.18);
+
+  --alert:       #dc2626;
+  --alert-dim:   #b91c1c;
+  --alert-glow:  rgba(220,38,38,0.18);
+
+  /* Gradients stay the same */
+  --grad-glass: linear-gradient(145deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.01) 100%);
+}
+
 /* ─── Reset ─────────────────────────────────────────────── */
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
@@ -74,7 +122,9 @@ body {
   color: var(--paper);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
 }
+
 
 h1,h2,h3,h4,.font-display {
   font-family: var(--font-display);
